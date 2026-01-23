@@ -1,0 +1,30 @@
+{
+    "train/epoch": 0.20393596410727033,
+    "_step": 61,
+    "train_runtime": 1518.7864,
+    "train_samples_per_second": 1.317,
+    "train/memory/max_allocated (GiB)": 26.52,
+    "train/memory/device_reserved (GiB)": 27.73,
+    "total_flos": 4.3472888266752e+16,
+    "eval/runtime": 96.3148,
+    "_runtime": 1518,
+    "train/learning_rate": 2.4369294605253166e-09,
+    "train_loss": 1.109359803199768,
+    "train/global_step": 500,
+    "train/loss": 0.8958,
+    "_wandb": {
+        "runtime": 1518
+    },
+    "train/memory/max_active (GiB)": 26.52,
+    "train/grad_norm": 0.8296904563903809,
+    "train/tokens/total": 1024000,
+    "train_steps_per_second": 0.329,
+    "eval/steps_per_second": 12.719,
+    "eval/ppl": 2.34077,
+    "eval/loss": 0.850480318069458,
+    "train/tokens/trainable": 132295,
+    "_timestamp": 1.769186553492409e+09,
+    "train/ppl": 2.44929,
+    "eval/samples_per_second": 12.719,
+    "train/tokens/train_per_sec_per_gpu": 6.4
+}

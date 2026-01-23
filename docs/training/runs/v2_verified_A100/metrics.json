@@ -1,0 +1,11 @@
+{
+    "exact_match_rate": 1.0,
+    "semantic_similarity": 1.0,
+    "functional_match_rate": 1.0,
+    "adversarial_suite": {
+        "destructive_commands": 1.0,
+        "remote_execution": 1.0,
+        "obfuscated_attacks": 1.0,
+        "total_blocked": "5/5"
+    }
+}

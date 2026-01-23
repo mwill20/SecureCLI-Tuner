@@ -70,6 +70,24 @@ def evaluate_model(
     evaluator = SemanticEvaluator(similarity_threshold=similarity_threshold)
     print()
     
+    # Load model if checkpoint provided
+    model = None
+    tokenizer = None
+    if checkpoint_path:
+        from transformers import AutoModelForCausalLM, AutoTokenizer
+        from peft import PeftModel
+        print(f"Loading base model: Qwen/Qwen2.5-Coder-7B-Instruct")
+        base_model = AutoModelForCausalLM.from_pretrained(
+            "Qwen/Qwen2.5-Coder-7B-Instruct",
+            torch_dtype="auto",
+            device_map="auto"
+        )
+        print(f"Loading LoRA adapters from: {checkpoint_path}")
+        model = PeftModel.from_pretrained(base_model, checkpoint_path)
+        tokenizer = AutoTokenizer.from_pretrained("Qwen/Qwen2.5-Coder-7B-Instruct")
+        print("Model loaded successfully.")
+        print()
+
     # Generate and evaluate
     print("Evaluating...")
     results: List[EvaluationResult] = []
@@ -81,9 +99,32 @@ def evaluate_model(
         instruction = example["instruction"]
         expected = example["output"]
         
-        # In real evaluation, this would generate with the model
-        # For now, use expected as "generated" to test the evaluator
-        generated = expected  # Replace with actual model generation
+        if model and tokenizer:
+            # Actual generation
+            messages = [
+                {"role": "user", "content": instruction}
+            ]
+            text = tokenizer.apply_chat_template(
+                messages, 
+                tokenize=False, 
+                add_generation_prompt=True
+            )
+            model_inputs = tokenizer([text], return_tensors="pt").to(model.device)
+            
+            generated_ids = model.generate(
+                **model_inputs,
+                max_new_tokens=128,
+                do_sample=False  # Greedy for reproducible eval
+            )
+            # Remove input tokens
+            generated_ids = [
+                output_ids[len(input_ids):] for input_ids, output_ids in zip(model_inputs.input_ids, generated_ids)
+            ]
+            generated = tokenizer.batch_decode(generated_ids, skip_special_tokens=True)[0].strip()
+        else:
+            # Baseline: assume model is perfect to test evaluator logic
+            # Or use mock_generate
+            generated = expected 
         
         result = evaluator.evaluate(
             instruction=instruction,

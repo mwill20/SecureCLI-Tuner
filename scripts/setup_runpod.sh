@@ -49,8 +49,12 @@ echo "Step 2/6: Setting up Python environment..."
 # Upgrade pip
 pip install -q --upgrade pip
 
-# Fix torchvision compatibility (don't upgrade torch, keep what RunPod has)
-pip install -q --no-deps torchvision==0.19.1+cu124 || true
+# Fix torch/torchvision compatibility (matching versions for cu124)
+pip install -q --root-user-action=ignore torch==2.6.0+cu124 torchvision==0.21.0+cu124 \
+    --index-url https://download.pytorch.org/whl/cu124 --force-reinstall
+
+# Verify the fix
+python -c "import torch; import torchvision; print(f'  torch={torch.__version__}, torchvision={torchvision.__version__}')"
 
 # Install core dependencies (without changing torch)
 pip install -q datasets transformers pydantic pysigma PyYAML
@@ -59,7 +63,12 @@ pip install -q datasets transformers pydantic pysigma PyYAML
 pip install -q accelerate bitsandbytes wandb
 
 # Install axolotl (for training)
-pip install -q axolotl
+pip install -q axolotl==0.10.0 --no-deps
+
+# Fix Axolotl Telemetry Bug (Missing whitelist.yaml)
+AXOLOTL_PATH=$(python -c "import axolotl; import os; print(os.path.dirname(axolotl.__file__))")
+mkdir -p "$AXOLOTL_PATH/telemetry"
+echo "[]" > "$AXOLOTL_PATH/telemetry/whitelist.yaml"
 
 echo "  ✓ Dependencies installed"
 
@@ -121,7 +130,7 @@ echo "NEXT STEPS:"
 echo "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
 echo ""
 echo "1. Start training:"
-echo "   accelerate launch -m axolotl.cli.train training/axolotl_config.yaml"
+echo "   AXOLOTL_DO_NOT_TRACK=1 accelerate launch -m axolotl.cli.train training/axolotl_config.yaml"
 echo ""
 echo "2. Monitor in W&B:"
 echo "   https://wandb.ai/YOUR_USERNAME/SecureCLI-Training"

@@ -36,25 +36,25 @@ Data preparation is 80% of ML engineering. Automating it ensures:
 │                    setup_runpod.sh                              │
 ├─────────────────────────────────────────────────────────────────┤
 │  Step 1: apt-get install shellcheck                             │
-│  Step 2: pip install -r requirements.txt                        │
+│  Step 2: pip install torch==2.6.0 torchvision==0.21.0           │
 │  Step 3: python scripts/download_datasets.py                    │
-│  Step 4: python scripts/download_semantic_model.py              │
+│  Step 4: Fix Axolotl telemetry whitelist                        │
 │  Step 5: python scripts/prepare_training_data.py                │
 └─────────────────────────────────────────────────────────────────┘
-                              ↓
+                               ↓
 ┌─────────────────────────────────────────────────────────────────┐
 │                    Output: data/processed/                      │
 ├─────────────────────────────────────────────────────────────────┤
-│  train.jsonl    (~14K examples)                                 │
-│  val.jsonl      (~1.7K examples)                                │
-│  test.jsonl     (~1.7K examples)                                │
+│  train.jsonl    (~9.8K examples)                                │
+│  val.jsonl      (~1.2K examples)                                │
+│  test.jsonl     (~1.2K examples)                                │
 │  provenance.json (audit trail)                                  │
 └─────────────────────────────────────────────────────────────────┘
 ```
 
 ### Data Flow
 
-```
+```text
 HuggingFace Datasets
        ↓
 [1] Download (prabhanshubhowal/natural_language_to_linux + TLDR)
@@ -92,13 +92,18 @@ set -e  # Exit on any error
 apt-get update -qq
 apt-get install -y -qq shellcheck
 
-# Install Python dependencies
-pip install -q -r requirements.txt
-pip install -q axolotl accelerate bitsandbytes wandb
+# Install Python dependencies (Fixed version mapping)
+pip install -q torch==2.6.0+cu124 torchvision==0.21.0+cu124 --index-url https://download.pytorch.org/whl/cu124
+pip install -q axolotl==0.10.0 --no-deps
+pip install -q accelerate bitsandbytes wandb datasets transformers
+
+# Fix Axolotl Telemetry Bug
+AXOLOTL_PATH=$(python -c "import axolotl; import os; print(os.path.dirname(axolotl.__file__))")
+mkdir -p "$AXOLOTL_PATH/telemetry"
+echo "[]" > "$AXOLOTL_PATH/telemetry/whitelist.yaml"
 
 # Download and prepare data
 python scripts/download_datasets.py
-python scripts/download_semantic_model.py
 python scripts/prepare_training_data.py
 ```
 
@@ -123,7 +128,7 @@ def download_tldr_dataset():
     # Only keeps platform == "common" or "linux"
 ```
 
-**Why normalize?** Different datasets use different field names. Normalizing to `instruction`/`output` ensures our pipeline works with any source.
+### Why normalize? Different datasets use different field names. Normalizing to `instruction`/`output` ensures our pipeline works with any source
 
 ---
 
@@ -131,7 +136,7 @@ def download_tldr_dataset():
 
 The core data engineering logic. 7 steps:
 
-**Step 1: Load raw datasets**
+#### Step 1: Load raw datasets
 
 ```python
 def load_raw_datasets() -> List[Dict]:
@@ -140,7 +145,7 @@ def load_raw_datasets() -> List[Dict]:
         # Merge all sources
 ```
 
-**Step 2: Deduplicate**
+#### Step 2: Deduplicate
 
 ```python
 def deduplicate(examples: List[Dict]) -> List[Dict]:
@@ -166,7 +171,7 @@ def validate_schema(examples: List[Dict]) -> List[Dict]:
     )
 ```
 
-**Step 4: Filter dangerous commands**
+#### Step 4: Filter dangerous commands
 
 ```python
 def filter_dangerous(examples: List[Dict]) -> List[Dict]:
@@ -180,7 +185,7 @@ def filter_dangerous(examples: List[Dict]) -> List[Dict]:
 
 **Why at training time?** The model should never see dangerous examples. Training-time filtering is the first line of defense.
 
-**Step 5: Shellcheck validation**
+#### Step 5: Shellcheck validation
 
 ```python
 def validate_shellcheck(examples: List[Dict]) -> List[Dict]:
@@ -191,7 +196,7 @@ def validate_shellcheck(examples: List[Dict]) -> List[Dict]:
     )
 ```
 
-**Step 6: Apply chat template**
+#### Step 6: Apply chat template
 
 ```python
 def apply_chat_template(examples: List[Dict]) -> List[Dict]:
@@ -205,7 +210,7 @@ def apply_chat_template(examples: List[Dict]) -> List[Dict]:
     text = tokenizer.apply_chat_template(messages)
 ```
 
-**Step 7: Split and save**
+#### Step 7: Split and save
 
 ```python
 def split_dataset(examples: List[Dict]) -> Dict:
@@ -251,12 +256,12 @@ cd SecureCLI-Tuner
 bash scripts/setup_runpod.sh
 
 # 3. Start training
-accelerate launch -m axolotl.cli.train training/axolotl_config.yaml
+AXOLOTL_DO_NOT_TRACK=1 accelerate launch -m axolotl.cli.train training/axolotl_config.yaml
 ```
 
 ### Expected Output
 
-```
+```bash
 ============================================================
 SecureCLI-Tuner RunPod Setup
 ============================================================
@@ -268,11 +273,11 @@ Step 3/5: Downloading datasets...
 Step 4/5: Downloading CodeBERT semantic model...
   Model saved to: models/semantic/codebert-insecure-code
 Step 5/5: Preparing training data...
-  Removed 1247 duplicates
-  Schema valid: 17110
-  Dangerous removed: 0
-  Shellcheck passed: 16823
-  Split: 13458 train, 1682 val, 1683 test
+  Removed 5616 duplicates
+  Schema valid: 12736
+  Dangerous removed: 95
+  Shellcheck passed: 12259
+  Split: 9807 train, 1225 val, 1227 test
 
 ✓ Setup complete!
 ```

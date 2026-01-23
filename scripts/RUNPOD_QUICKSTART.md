@@ -36,7 +36,7 @@ bash scripts/setup_runpod.sh
 ### Step 3: Start Training
 
 ```bash
-accelerate launch -m axolotl.cli.train training/axolotl_config.yaml
+AXOLOTL_DO_NOT_TRACK=1 accelerate launch -m axolotl.cli.train training/axolotl_config.yaml
 ```
 
 ### Step 4: Monitor (open in browser)

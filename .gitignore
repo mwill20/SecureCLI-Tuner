@@ -38,3 +38,6 @@ Thumbs.db
 # Secrets
 *.key
 *.pem
+
+# Training runs
+docs/training/runs/**/*.zip

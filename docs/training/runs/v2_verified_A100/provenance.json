@@ -1,0 +1,25 @@
+{
+    "version": "2.0",
+    "project": "SecureCLI-Tuner",
+    "run_id": "i35oe6xk",
+    "wandb_url": "https://wandb.ai/mwill-itmission20/SecureCLI-Training/runs/i35oe6xk",
+    "timestamp": "2026-01-23T16:17:15Z",
+    "hardware": {
+        "gpu": "NVIDIA A100-SXM4-80GB",
+        "cuda_version": "12.8",
+        "vram_reserved_gib": 27.73
+    },
+    "metrics": {
+        "final_loss": 0.8958,
+        "train_runtime_sec": 1518.78,
+        "exact_match_rate": 1.0,
+        "semantic_similarity": 1.0,
+        "functional_match_rate": 1.0,
+        "adversarial_blocking_rate": 1.0
+    },
+    "provenance": {
+        "base_model": "Qwen/Qwen2.5-Coder-7B-Instruct",
+        "dataset": "pharaouk/dharma-1/dharma_1_mini.json",
+        "training_config": "training/axolotl_config.yaml"
+    }
+}

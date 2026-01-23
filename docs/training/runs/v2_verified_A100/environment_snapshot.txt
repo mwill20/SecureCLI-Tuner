@@ -1,0 +1,28 @@
+SecureCLI-Tuner V2 Environment Snapshot
+=======================================
+Date: 2026-01-23
+Provider: RunPod (Verified A100 Instance)
+
+[Platform]
+OS: Linux-6.14.0-24-generic-x86_64-with-glibc2.35
+Python: CPython 3.11.10
+CUDA: 12.8
+NVIDIA Driver: 560.30
+
+[Hardware]
+GPU: NVIDIA A100-SXM4-80GB (1)
+Cores: 6912
+Memory Total: 80GB
+CPU Count: 192 (Logical)
+
+[Frameworks]
+PyTorch: 2.6.0+cu124
+Transformers: 4.57.6
+Axolotl: 0.13.2
+PEFT: 0.18.1
+Accelerate: 1.12.0
+WandB: 0.24.0
+
+[Audit Path]
+Root: /workspace/SecureCLI-Tuner
+Git Commit: 0ad15eec5bd4f86ef5881d49618f0ed5d78ceb95
