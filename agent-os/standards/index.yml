@@ -1,0 +1,4 @@
+name: SecureCLI-Tuner
+version: 1.0.0
+standards:
+  - path: global/tech-stack.md

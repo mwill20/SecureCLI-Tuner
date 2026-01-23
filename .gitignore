@@ -1,0 +1,40 @@
+# Environment
+.env
+.venv/
+venv/
+__pycache__/
+*.pyc
+*.pyo
+
+# IDE
+.vscode/
+.idea/
+*.swp
+
+# Model artifacts
+*.bin
+*.safetensors
+*.gguf
+checkpoints/
+
+# Data
+*.jsonl
+!tests/fixtures/*.jsonl
+
+# Build
+dist/
+build/
+*.egg-info/
+
+# Logs
+*.log
+logs/
+wandb/
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Secrets
+*.key
+*.pem

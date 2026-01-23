@@ -1,0 +1,20 @@
+# Agent OS v3 Configuration
+# SecureCLI-Tuner Runtime Settings
+
+project:
+  name: SecureCLI-Tuner
+  version: "2.0.0"
+  description: Zero-Trust Security Kernel for Agentic DevOps
+
+security:
+  owasp_asi_compliance: true
+  adversarial_regression_threshold: 0.95
+  guardrails:
+    - deterministic
+    - semantic
+    - policy
+
+observability:
+  wandb:
+    training_project: SecureCLI-Training
+    monitoring_project: SecureCLI-Monitoring

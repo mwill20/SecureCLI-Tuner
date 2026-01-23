@@ -1,0 +1,3 @@
+# Placeholder for SigmaHQ rules
+# Drop .yml files from SigmaHQ community rules here
+# They will be parsed at CommandRisk engine initialization
