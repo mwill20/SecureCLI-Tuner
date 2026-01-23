@@ -29,7 +29,7 @@ SHELLCHECK_TIMEOUT = 5
 MAX_LENGTH = 2048
 MIN_DATASET_SIZE = 500
 SPLIT_SEED = 42
-SAMPLE_SIZE = 1835  # Set to integer (e.g., 2000) to process a random sample for testing
+SAMPLE_SIZE = None  # Set to None for FULL dataset, or integer for sampling
 SAMPLE_SEED = 42  # Random seed for sampling when SAMPLE_SIZE is set
 
 ROOT_DIR = Path(__file__).resolve().parents[1]
