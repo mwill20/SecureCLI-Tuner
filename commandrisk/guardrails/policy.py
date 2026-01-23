@@ -11,7 +11,7 @@ from dataclasses import dataclass
 from typing import List, Optional
 from enum import Enum
 
-from ..engine import GuardrailResponse, ValidationResult
+from ..types import GuardrailResponse, ValidationResult
 
 
 class PolicyLevel(Enum):

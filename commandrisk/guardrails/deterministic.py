@@ -8,8 +8,8 @@ import re
 from dataclasses import dataclass, field
 from typing import List, Tuple, Pattern
 
-# Import from engine to avoid circular imports
-from ..engine import GuardrailResponse, ValidationResult
+# Import from types to avoid circular imports
+from ..types import GuardrailResponse, ValidationResult
 
 
 @dataclass

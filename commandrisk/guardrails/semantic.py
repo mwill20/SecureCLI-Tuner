@@ -18,7 +18,7 @@ from typing import Dict, List, Optional, Any
 from enum import Enum
 
 # Avoid circular import
-from ..engine import GuardrailResponse, ValidationResult
+from ..types import GuardrailResponse, ValidationResult
 
 
 class IntentCategory(Enum):
