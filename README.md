@@ -29,15 +29,17 @@
 | **CommandRisk Engine** | 3-layer validation (Deterministic → Heuristic → Semantic) |
 | **Hybrid AST + CodeBERT** | Fast structural analysis + ML intent classification |
 | **OWASP ASI Compliance** | Every block mapped to ASI Top 10 + MITRE ATT&CK |
+| **Semantic Evaluation** | Beyond exact-match: CodeBERT embeddings for functional equivalence |
 | **AI-BOM** | CycloneDX supply chain transparency |
 
-### Key Results (from V1)
+### Key Results
 
-| Metric | Result | Notes |
-|--------|--------|-------|
-| Training data safety | 0 dangerous commands | Zero-tolerance filtering |
-| Command-only rate | 99.4% | Format learning success |
-| Adversarial safe rate | 57% (V1) → **>95% (V2 target)** | Hybrid guardrails |
+| Metric | V1 Result | V2 Target |
+|--------|-----------|-----------|
+| Training data safety | 0 dangerous commands | 0 dangerous commands |
+| Command-only rate | 99.4% | 99%+ |
+| Adversarial safe rate | 57% | **>95%** |
+| Semantic match rate | N/A | **70-85%** |
 
 ---
 
@@ -66,6 +68,8 @@ Natural Language → Router → Generator (LLM) → CommandRisk Engine → Secur
 
 ## Quick Start
 
+### Local Development
+
 ```powershell
 cd C:\Projects\SecureCLI-Tuner
 python -m venv .venv
@@ -79,20 +83,52 @@ python main.py generate "list all docker containers"
 python -m pytest tests/ -v
 ```
 
+### RunPod Training
+
+```bash
+cd /workspace
+git clone https://github.com/mwill20/SecureCLI-Tuner.git
+cd SecureCLI-Tuner
+
+# Create .env with keys
+cat > .env << 'EOF'
+WANDB_API_KEY=your_key
+HF_TOKEN=your_token
+EOF
+
+# One-command setup
+bash scripts/setup_runpod.sh
+
+# Start training
+accelerate launch -m axolotl.cli.train training/axolotl_config.yaml
+```
+
 ---
 
 ## Project Structure
 
 ```
 SecureCLI-Tuner/
-├── cli_tuner/          # Command generation (router, generator, prompts)
-├── commandrisk/        # Security engine (3 guardrails, wrapper)
-├── training/           # QLoRA fine-tuning (axolotl configs)
-├── evaluation/         # Safety evaluation suite
-├── compliance/         # OWASP & AI-BOM tools
-├── docs/               # SECURITY.md, OWASP_COMPLIANCE.md
-│   └── lessons/        # Educational walkthroughs
-└── tests/              # Adversarial suite (>95% threshold)
+├── cli_tuner/              # Command generation (router, generator, prompts)
+├── commandrisk/            # Security engine
+│   ├── types.py            # Shared types (avoid circular imports)
+│   ├── engine.py           # 3-layer orchestrator
+│   ├── wrapper.py          # Secure execution wrapper
+│   └── guardrails/         # Deterministic, Semantic, Policy
+├── data_pipeline/          # Training data preparation
+├── evaluation/             # Semantic equivalence evaluator
+├── scripts/                # Setup and utility scripts
+│   ├── setup_runpod.sh     # One-command RunPod setup
+│   ├── download_datasets.py
+│   ├── prepare_training_data.py
+│   ├── evaluate_semantic.py
+│   └── demo_v1_security_gap.py
+├── schemas/                # Pydantic validation schemas
+├── training/               # QLoRA fine-tuning (axolotl configs)
+├── compliance/             # OWASP & AI-BOM tools
+├── docs/                   # SECURITY.md, OWASP_COMPLIANCE.md
+│   └── lessons/            # 6 educational lessons (~4 hours)
+└── tests/                  # Adversarial suite (>95% threshold)
 ```
 
 ---
@@ -121,14 +157,16 @@ Every component is untrusted until validated:
 
 ## Educational Materials
 
-Comprehensive lessons for AI/ML engineers and security practitioners:
+Comprehensive lessons for AI/ML engineers and security practitioners (~4 hours total):
 
-| Lesson | Topic |
-|--------|-------|
-| [Lesson 1](docs/lessons/Lesson_01_Data_Pipeline.md) | Security-First Data Pipelines |
-| [Lesson 2](docs/lessons/Lesson_02_Training.md) | QLoRA Fine-Tuning |
-| [Lesson 3](docs/lessons/Lesson_03_Evaluation.md) | Safety Evaluation |
-| [Lesson 4](docs/lessons/Lesson_04_CommandRisk.md) | CommandRisk Engine |
+| Lesson | Topic | Duration |
+|--------|-------|----------|
+| [Lesson 1](docs/lessons/Lesson_01_Data_Pipeline.md) | Security-First Data Pipelines | 45 min |
+| [Lesson 2](docs/lessons/Lesson_02_Training.md) | QLoRA Fine-Tuning | 30 min |
+| [Lesson 3](docs/lessons/Lesson_03_Evaluation.md) | Safety Evaluation | 30 min |
+| [Lesson 4](docs/lessons/Lesson_04_CommandRisk.md) | CommandRisk Engine | 60 min |
+| [Lesson 5](docs/lessons/Lesson_05_RunPod_Setup.md) | RunPod Setup & Data Prep | 45 min |
+| [Lesson 6](docs/lessons/Lesson_06_Semantic_Evaluation.md) | Semantic Evaluation | 30 min |
 
 ---
 
@@ -138,6 +176,8 @@ Comprehensive lessons for AI/ML engineers and security practitioners:
 - transformers >= 4.40.0
 - pysigma >= 0.11.0 (SigmaHQ)
 - mrm8488/codebert-base-finetuned-detect-insecure-code (Semantic layer)
+- axolotl (QLoRA training)
+- wandb (experiment tracking)
 
 ---
 
