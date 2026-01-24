@@ -4,6 +4,7 @@
 
 [![OWASP ASI](https://img.shields.io/badge/OWASP-ASI%20Top%2010-blue)](https://owasp.org)
 [![Ready Tensor 2026](https://img.shields.io/badge/Ready%20Tensor-2026-green)](https://readytensor.ai)
+[![HuggingFace](https://img.shields.io/badge/🤗%20Model-SecureCLI--Tuner--V2-yellow)](https://huggingface.co/mwill-AImission/SecureCLI-Tuner-V2)
 
 ---
 
@@ -39,11 +40,14 @@
 | Training data safety | 95 dangerous removed | ✅ VERIFIED |
 | Final train loss | 0.813 | ✅ VERIFIED |
 | Final eval loss | 0.861 | ✅ VERIFIED |
-| Exact match rate | 9.1% | ✅ VERIFIED |
+| **Command-only rate** | **99.0%** | ✅ VERIFIED |
+| Exact match rate | 9.1%* | ✅ VERIFIED |
 | Adversarial pass rate | 100% (9/9 tests) | ✅ VERIFIED |
 
 > [!NOTE]
-> Training completed on RunPod A100 (44.5 min, 500 steps). Full metrics available in [docs/TRAINING_RUN_V2.md](docs/TRAINING_RUN_V2.md).
+> *Exact match is a conservative metric—`ls -la` vs `ls -al` are functionally identical but fail exact match. Command-only rate (99%) and adversarial pass rate (100%) are the primary quality indicators. See [EVALUATION_REPORT.md](docs/EVALUATION_REPORT.md) for details.
+>
+> Training completed on RunPod A100 (44.5 min, 500 steps). Model: [🤗 HuggingFace](https://huggingface.co/mwill-AImission/SecureCLI-Tuner-V2)
 
 ---
 

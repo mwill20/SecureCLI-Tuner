@@ -1,3 +1,18 @@
+---
+license: mit
+base_model: Qwen/Qwen2.5-Coder-7B-Instruct
+tags:
+  - bash
+  - cli
+  - security
+  - devops
+  - code-generation
+  - qlora
+language:
+  - en
+pipeline_tag: text-generation
+---
+
 # Model Card: SecureCLI-Tuner V2
 
 ## Model Details
@@ -116,6 +131,12 @@ gradient_accumulation_steps: 4
 - **Zero-Tolerance Patterns:** Model never saw commands matching `rm -rf /`, fork bombs, or remote execution patterns.
 - **Runtime Guardrails:** CommandRisk engine validates every generated command before execution.
 - **OWASP ASI Compliance:** All blocked commands mapped to ASI Top 10 categories.
+
+---
+
+## License
+
+This project is released under the **MIT License**. See [LICENSE](../LICENSE) for details.
 
 ---
 
