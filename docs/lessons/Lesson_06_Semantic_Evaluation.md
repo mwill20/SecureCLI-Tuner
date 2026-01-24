@@ -262,5 +262,4 @@ The similarity threshold (default 0.80) balances precision and recall:
 
 - Run evaluation after training completes
 - Review `results.jsonl` to calibrate threshold
-- Include semantic metrics in final report
-- Consider adding execution-based evaluation for critical use cases
+- Proceed to [Lesson 7: Inference & Use Cases](Lesson_07_Inference_and_Use_Cases.md)

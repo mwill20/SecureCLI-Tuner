@@ -116,6 +116,7 @@ Comprehensive lessons for AI/ML engineers and security practitioners (~4 hours t
 | [**Lesson 4**](docs/lessons/Lesson_04_CommandRisk.md) | CommandRisk Engine |
 | [**Lesson 5**](docs/lessons/Lesson_05_RunPod_Setup.md) | RunPod Setup & Data Prep |
 | [**Lesson 6**](docs/lessons/Lesson_06_Semantic_Evaluation.md) | Semantic Evaluation |
+| [**Lesson 7**](docs/lessons/Lesson_07_Inference_and_Use_Cases.md) | Inference & Use Cases |
 
 ---
 
