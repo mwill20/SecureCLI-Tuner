@@ -58,6 +58,7 @@ rm -rf /usr/local/lib/python3.11/dist-packages/axolotl*
 
 # 3. Fresh installation using UV's lightning-fast resolver with NO CACHE
 echo "  Performing clean-room installation of validated stack..."
+# We relax the packaging constraint to let UV find the best match
 uv pip install --system --force-reinstall --no-cache \
     --index-url https://download.pytorch.org/whl/cu124 \
     "torch==2.5.1+cu124" \
@@ -68,7 +69,7 @@ uv pip install --system --force-reinstall --no-cache \
     "datasets>=3.2.0" \
     "bitsandbytes>=0.45.0" \
     "pydantic" "pysigma" "PyYAML" "wandb" \
-    "packaging==25.0"
+    "packaging<26.0,>=24.0"
 
 # Install axolotl separately to ensure it doesn't downgrade transformers
 uv pip install --system --no-deps "axolotl==0.10.0"
