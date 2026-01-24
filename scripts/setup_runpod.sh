@@ -28,7 +28,8 @@ fi
 echo ""
 echo "Step 1/6: Installing 'uv' package manager..."
 curl -LsSf https://astral.sh/uv/install.sh | sh
-source $HOME/.cargo/env
+# Fix: Use the correct path for uv on RunPod
+export PATH="$HOME/.local/bin:$PATH"
 echo "  ✓ uv installed and added to path"
 
 # -----------------------------------------------------------------------------
