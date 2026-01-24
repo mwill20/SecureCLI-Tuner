@@ -41,33 +41,44 @@ apt-get install -y -qq shellcheck
 echo "  ✓ Shellcheck installed"
 
 # -----------------------------------------------------------------------------
-# Step 2: Fix Python environment (Nuclear Option)
+# Step 2: Fix Python environment (Jan 2026 Stability Stack)
 # -----------------------------------------------------------------------------
 echo ""
-echo "Step 2/6: Setting up Python environment (Nuclear Option)..."
+echo "Step 2/6: Setting up Python environment (Jan 2026 Stability)..."
 
 # Upgrade pip
 pip install -q --upgrade pip
 
 # Purge any existing problematic installations
 echo "  Purging existing packages to ensure clean slate..."
-pip uninstall -q -y torch torchvision torchaudio transformers axolotl peft bitsandbytes 2>/dev/null || true
+pip uninstall -q -y torch torchvision torchaudio transformers axolotl peft bitsandbytes accelerate datasets 2>/dev/null || true
 
 # Install specific, validated stack for cu124 (Torch 2.5.1 + Torchvision 0.20.1)
-echo "  Installing validated Torch/Torchvision stack..."
-pip install -q --root-user-action=ignore torch==2.5.1+cu124 torchvision==0.20.1+cu124 \
-    --index-url https://download.pytorch.org/whl/cu124 --force-reinstall
+# We use the explicit index-url to ensure we get the CUDA-enabled versions
+echo "  Installing validated Torch/Torchvision (CUDA 12.4)..."
+pip install -q --root-user-action=ignore \
+    torch==2.5.1+cu124 \
+    torchvision==0.20.1+cu124 \
+    --index-url https://download.pytorch.org/whl/cu124
 
-# Install core dependencies with specific version of packaging to resolve conflicts
-pip install -q "packaging<26.0,>=25.0" # Match pysigma and axolotl 0.10 needs
-pip install -q datasets transformers pydantic pysigma PyYAML
+# Install LLM core stack (Pinned for Jan 2026 compatibility)
+echo "  Installing LLM core (Transformers/PEFT/Accelerate)..."
+pip install -q \
+    transformers>=4.57.6 \
+    peft>=0.17.1 \
+    accelerate>=1.2.1 \
+    datasets>=3.2.0 \
+    bitsandbytes>=0.45.0 \
+    pydantic pysigma PyYAML
 
-# Install training dependencies
-pip install -q accelerate bitsandbytes wandb
+# Install axolotl (Pinning to 0.10.0 for known stability in this pipeline)
+echo "  Installing Axolotl..."
+pip install -q axolotl==0.10.0 --no-deps
 
-# Install axolotl 0.10.0 (pinned and forced)
-echo "  Installing Axolotl 0.10.0..."
-pip install -q axolotl==0.10.0 --no-deps --force-reinstall
+# Step 2b: Resolve the "Packaging" Conflict
+# Axolotl wants 26.0, PySigma wants <26.0. We force 25.0 to satisfy both as much as possible.
+echo "  Resolving dependency conflicts (pinning packaging==25.0)..."
+pip install -q "packaging==25.0" --force-reinstall
 
 # Fix Axolotl Telemetry Bug (Missing whitelist.yaml)
 AXOLOTL_PATH=$(python -c "import axolotl; import os; print(os.path.dirname(axolotl.__file__))")
