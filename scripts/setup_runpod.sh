@@ -70,7 +70,7 @@ uv pip install --system --force-reinstall --no-cache \
     "accelerate>=1.2.1" \
     "datasets>=3.2.0" \
     "bitsandbytes>=0.45.0" \
-    "pydantic" "pysigma" "PyYAML" "wandb" \
+    "pydantic" "pysigma" "PyYAML" "wandb" "colorama" \
     "packaging<26.0,>=24.0"
 
 # Install axolotl separately to ensure it doesn't downgrade transformers
