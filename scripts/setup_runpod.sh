@@ -73,8 +73,9 @@ uv pip install --system --force-reinstall --no-cache \
     "pydantic" "pysigma" "PyYAML" "wandb" "colorama" \
     "packaging<26.0,>=24.0"
 
-# Install axolotl separately to ensure it doesn't downgrade transformers
-uv pip install --system --no-deps "axolotl==0.10.0"
+# Install axolotl WITH its dependencies (it knows what versions it needs)
+echo "  Installing Axolotl with full dependencies..."
+uv pip install --system --no-cache "axolotl==0.10.0"
 
 # Fix Axolotl Telemetry Bug
 AXOLOTL_PATH=$(python -c "import axolotl; import os; print(os.path.dirname(axolotl.__file__))")
