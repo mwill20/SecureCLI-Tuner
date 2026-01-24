@@ -46,6 +46,7 @@ test_datasets:
   - path: data/processed/val.jsonl
     type: completion
     field: text
+    split: train
 
 # ============================================================================
 # SEQUENCE CONFIGURATION
