@@ -23,6 +23,15 @@ from typing import List, Dict
 import sys
 sys.path.insert(0, str(Path(__file__).resolve().parents[1]))
 
+# Fix AWQ/transformers compatibility issue
+try:
+    from transformers import activations
+    if not hasattr(activations, 'PytorchGELUTanh'):
+        # Monkey patch for AWQ compatibility
+        activations.PytorchGELUTanh = activations.GELUActivation
+except Exception:
+    pass
+
 from evaluation.semantic_evaluator import SemanticEvaluator, EvaluationResult
 
 
@@ -77,13 +86,28 @@ def evaluate_model(
         from transformers import AutoModelForCausalLM, AutoTokenizer
         from peft import PeftModel
         print(f"Loading base model: Qwen/Qwen2.5-Coder-7B-Instruct")
+        # Disable AWQ dispatcher to avoid activation import errors
+        import os
+        os.environ["DISABLE_AWQ"] = "1"
+
         base_model = AutoModelForCausalLM.from_pretrained(
             "Qwen/Qwen2.5-Coder-7B-Instruct",
             torch_dtype="auto",
-            device_map="auto"
+            device_map="auto",
+            trust_remote_code=False
         )
         print(f"Loading LoRA adapters from: {checkpoint_path}")
-        model = PeftModel.from_pretrained(base_model, checkpoint_path)
+
+        # Load PEFT config to check adapter type
+        from peft import PeftConfig
+        config = PeftConfig.from_pretrained(checkpoint_path)
+
+        # Load the model with the adapter
+        model = PeftModel.from_pretrained(
+            base_model,
+            checkpoint_path,
+            is_trainable=False
+        )
         tokenizer = AutoTokenizer.from_pretrained("Qwen/Qwen2.5-Coder-7B-Instruct")
         print("Model loaded successfully.")
         print()
