@@ -178,24 +178,27 @@ Loading test data from: data/processed/test.jsonl
 Initializing semantic evaluator (threshold: 0.80)
 
 Evaluating...
-  Progress: 50/1683
-  Progress: 100/1683
+  Progress: 50/1227
+  Progress: 100/1227
   ...
 
 ============================================================
 RESULTS
 ============================================================
 
-Total examples: 1683
+Total examples: 1227
 
-Exact Match Rate:        252/1683 = 15.0%
-Semantic Match Rate:    1262/1683 = 75.0%
-Functional Match Rate:  1262/1683 = 75.0%
+Exact Match Rate:        112/1227 = 9.1%
+Semantic Match Rate:     112/1227 = 9.1%
+Functional Match Rate:   112/1227 = 9.1%
 
-Average Similarity:     0.823
+Average Similarity:     0.091
 
 Results saved to: evaluation/semantic
 ```
+
+> [!NOTE]
+> **Verified Result:** In run `honest-music-2`, CodeBERT did not load (torch version constraint), so semantic evaluation fell back to exact match. This is a conservative measurement.
 
 ### Output Files
 

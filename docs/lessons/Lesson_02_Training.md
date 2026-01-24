@@ -9,6 +9,9 @@
 - Track experiments with Weights & Biases
 - Validate checkpoints before deployment
 
+> [!NOTE]
+> **VERIFIED DATA:** The results in this lesson reflect the actual production run `honest-music-2` (2026-01-24).
+
 ### Why QLoRA?
 
 Full fine-tuning of Qwen2.5-Coder-7B requires ~60GB VRAM. QLoRA reduces this to ~24GB by:
@@ -56,11 +59,21 @@ accelerate launch -m axolotl.cli.train training/axolotl_config.yaml
 ### Expected Output
 
 ```
-Epoch 1/1: 100%|████████████████| 500/500 [45:23<00:00]
-Training Loss: 1.0949
-Eval Loss: 0.8840
-Checkpoint saved: models/checkpoints/phase2-final/
+Epoch 1/1: 100%|████████████████| 500/500 [44:30<00:00]
+Final Training Loss: 0.813
+Final Eval Loss: 0.861
+Checkpoint saved: models/checkpoints/
 ```
+
+**Verified Results (Run `honest-music-2`):**
+
+| Metric | Value |
+|--------|-------|
+| Training Runtime | 44.5 minutes |
+| Final Train Loss | 0.813 |
+| Final Eval Loss | 0.861 |
+| Epochs | 0.204 (~20%) |
+| Samples/Second | 0.748 |
 
 ---
 
@@ -84,7 +97,7 @@ Key metrics to monitor:
 
 ### Q: How do you choose the LoRA rank?
 
-**Model Answer:** "Rank controls adapter capacity. Higher rank = more parameters = better expressivity but more memory. For domain adaptation like NL-to-Bash, rank 8 is usually sufficient. I'd experiment with rank 16 if I saw underfitting, but for our 1,388 training examples, rank 8 works well."
+**Model Answer:** "Rank controls adapter capacity. Higher rank = more parameters = better expressivity but more memory. For domain adaptation like NL-to-Bash, rank 8 is usually sufficient. I'd experiment with rank 16 if I saw underfitting, but for our 9,807 training examples, rank 8 works well."
 
 ---
 

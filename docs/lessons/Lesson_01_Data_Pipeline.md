@@ -14,8 +14,8 @@ By the end of this lesson, you will be able to:
 - Enforce zero-tolerance dangerous command filtering
 - Read provenance logs to verify data quality and traceability
 
-> [!WARNING]
-> **RIGOR CHECK:** The numbers and counts shown in this lesson (e.g., "1,388 train examples") are based on a 10% sample for illustrative purposes. Your actual production run (using the full 18K+ dataset) will differ.
+> [!NOTE]
+> **VERIFIED DATA:** The numbers in this lesson reflect the actual production run `honest-music-2` (2026-01-24).
 
 ### Plain-English Explanation
 
@@ -45,34 +45,31 @@ Without this step, the model could learn to generate catastrophic commands like 
 3. **Every filtered record is logged** for auditability and repeatability
 4. **Sampling is random with a fixed seed** so test runs are reproducible
 
-> [!WARNING]
-> **RIGOR CHECK:** The metrics and example counts in this lesson are illustrative. The "75% Accuracy" shown below is a target result; your actual measured metrics must be reported in the final submission.
-
 ---
 
 ## 3. Data Flow
 
-```
+```text
 HuggingFace Dataset (18,357 examples)
   ↓
 [1] Load + Field Mapping (nl_command → instruction, bash_code → output)
-  ↓ [Random Sample: 1,835 examples, seed=42]
-[2] Shellcheck Syntax Validation (1,793 passed, 42 failed)
   ↓
-[3] Dangerous Pattern Filtering (0 dangerous commands found)
+[2] Deduplicate (5,616 removed) → 12,741 unique
   ↓
-[4] Qwen Chat Template (<|im_start|>system/user/assistant<|im_end|>)
+[3] Schema Validation (5 failed) → 12,736 valid
   ↓
-[5] Tokenize + Assistant-Only Masking (user tokens = -100)
+[4] Dangerous Pattern Filtering (95 removed) → 12,641 safe
   ↓
-[6] Deduplicate (58 removed) + Split (80/10/10, seed=42)
+[5] Shellcheck Syntax Validation (382 failed) → 12,259 passed
   ↓
-[7] Save Outputs + Provenance
+[6] Qwen Chat Template (<|im_start|>system/user/assistant<|im_end|>)
+  ↓
+[7] Split (80/10/10, seed=42)
   ↓
 data/processed/
-├── train.jsonl (1,388 examples)
-├── val.jsonl (173 examples)
-├── test.jsonl (174 examples)
+├── train.jsonl (9,807 examples)
+├── val.jsonl (1,225 examples)
+├── test.jsonl (1,227 examples)
 └── provenance.json (full audit trail)
 ```
 
@@ -109,17 +106,21 @@ python data_pipeline/preprocess_data.py
 **Expected output:**
 
 ```
-Step 1/7: Loading dataset...
-  Sampling 1835 examples from 18357 total (seed=42)
-Step 2/7: Running shellcheck...
-  Shellcheck complete: 1793/1835 passed (97%)
-Step 3/7: Filtering dangerous commands...
-Step 4/7: Applying chat template...
-Step 5/7: Tokenizing with assistant-only masking...
-Step 6/7: Splitting train/val/test...
-  Removed 58 duplicate examples
-Step 7/7: Saving outputs...
-Pipeline complete. 1388 train, 173 val, 174 test.
+Step 1/7: Loading raw datasets...
+  Loaded 18357 examples
+Step 2/7: Deduplicating...
+  Removed 5616 duplicates (12741 unique)
+Step 3/7: Validating schema...
+  Schema valid: 12736, invalid: 5
+Step 4/7: Filtering dangerous commands...
+  Safe: 12641, Dangerous removed: 95
+Step 5/7: Validating with shellcheck...
+  Shellcheck passed: 12259, failed: 382
+Step 6/7: Applying chat template...
+Step 7/7: Splitting and saving...
+  Split: 9807 train, 1225 val, 1227 test
+
+✓ Training data preparation complete!
 ```
 
 ### Exercise 2: Inspect Provenance
@@ -132,7 +133,7 @@ Get-Content data/processed/provenance.json
 
 ```powershell
 Get-Content data/logs/removed_dangerous.jsonl
-# Should be empty (0 dangerous commands in clean dataset)
+# Contains 95 dangerous commands that were filtered
 ```
 
 ---
@@ -149,7 +150,7 @@ Get-Content data/logs/removed_dangerous.jsonl
 
 ### Q: How do you handle the tradeoff between data quality and dataset size?
 
-**Model Answer:** "I track statistics in provenance. For the 10% sample, 42 commands failed Shellcheck and 58 duplicates were removed. The final 1,735 examples are clean. If a future dataset lost too many examples, the logs show exactly why—but safety filtering is non-negotiable."
+**Model Answer:** "I track statistics in provenance. In our production run, 5,616 duplicates were removed, 382 commands failed Shellcheck, and 95 dangerous commands were filtered. The final 12,259 examples are clean. If a future dataset lost too many examples, the logs show exactly why—but safety filtering is non-negotiable."
 
 ---
 
@@ -160,9 +161,6 @@ Get-Content data/logs/removed_dangerous.jsonl
 - ✅ Chat templates preserve the base model's instruction format
 - ✅ Masking ensures the model learns to generate commands, not prompts
 - ✅ Provenance provides a full audit trail
-
-> [!WARNING]
-> **RIGOR CHECK:** The training loss and evaluation metrics shown in this lesson are illustrative. Always refer to your actual Weights & Biases run for the authoritative performance of your model.
 
 ---
 

@@ -290,16 +290,16 @@ Every run creates `data/processed/provenance.json`:
 
 ```json
 {
-  "created_at": "2026-01-23T13:05:22+00:00",
+  "created_at": "2026-01-24T06:10:32+00:00",
   "base_model": "Qwen/Qwen2.5-Coder-7B-Instruct",
   "total_raw": 18357,
-  "after_dedup": 17110,
-  "after_schema": 17110,
-  "after_dangerous": 17110,
-  "after_shellcheck": 16823,
-  "train_size": 13458,
-  "val_size": 1682,
-  "test_size": 1683,
+  "after_dedup": 12741,
+  "after_schema": 12736,
+  "after_dangerous": 12641,
+  "after_shellcheck": 12259,
+  "train_size": 9807,
+  "val_size": 1225,
+  "test_size": 1227,
   "split_seed": 42
 }
 ```
