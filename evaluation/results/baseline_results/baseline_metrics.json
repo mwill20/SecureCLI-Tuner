@@ -1,0 +1,152 @@
+{
+  "model": "Qwen/Qwen2.5-Coder-7B-Instruct",
+  "test_file": "data/processed/test.jsonl",
+  "timestamp": "2026-01-24T15:27:58.395395",
+  "total": 1227,
+  "exact_match": 0,
+  "command_only": 1192,
+  "examples": [
+    {
+      "instruction": "find al the files that are modified exactly 2 days ago",
+      "expected": "find -daystart -mtime 2",
+      "generated": "To find all files that were modified exactly 2 days ago, you can use the `find` command in Unix/Linux systems. Here's how you can do it:\n\n```bash\nfind /path/to/search -type f -mtime 2\n```\n\nExplanation:\n- `/path/to/search`: Replace this with the directory where you want to start searching.\n- `-type f`: This option specifies that you're looking for files (not directories).\n- `-mtime 2`: This option finds files",
+      "exact_match": false,
+      "is_command": true
+    },
+    {
+      "instruction": "Search everywhere for a file called `httpd.conf' that is newer than /etc/apache-perl/httpd.conf",
+      "expected": "find / -name httpd.conf -newer /etc/apache-perl/httpd.conf",
+      "generated": "To search for a file named `httpd.conf` that is newer than `/etc/apache-perl/httpd.conf`, you can use the `find` command in Unix-like operating systems. Here's how you can do it:\n\n```sh\nfind / -name \"httpd.conf\" -newer /etc/apache-perl/httpd.conf 2>/dev/null\n```\n\nExplanation:\n- `find /`: This starts the search from the root directory (`/`).\n- `-name \"",
+      "exact_match": false,
+      "is_command": true
+    },
+    {
+      "instruction": "find all files in the file system which have been accessed in the last 24 hours",
+      "expected": "find / -atime 0",
+      "generated": "To find all files in the file system that have been accessed within the last 24 hours, you can use various command-line tools depending on your operating system. Below are examples for both Linux and Windows.\n\n### Linux\n\nIn Linux, you can use the `find` command to search for files based on their access time. Here is an example:\n\n```bash\nfind / -type f -atime -1\n```\n\n- `/`: The root directory of the file system.\n- `-",
+      "exact_match": false,
+      "is_command": true
+    },
+    {
+      "instruction": "replaces the last occurrence of 'a' with 'c' in file",
+      "expected": "tac file | awk '/a/ && !seen {sub; seen=1} 1' | tac",
+      "generated": "To replace the last occurrence of 'a' with 'c' in a file using Python, you can use the following script:\n\n```python\ndef replace_last_occurrence(file_path):\n    # Read the entire content of the file\n    with open(file_path, 'r') as file:\n        content = file.read()\n    \n    # Replace the last occurrence of 'a' with 'c'\n    new_content = content.rreplace('a', 'c', 1)\n    \n    # Write",
+      "exact_match": false,
+      "is_command": true
+    },
+    {
+      "instruction": "Numberically sort content of file 'files', using for sorting part of second one of dash separated fields beginning from second letter.",
+      "expected": "cat files | sort -t- -k2,2 -n",
+      "generated": "To numerically sort the content of a file named `files` based on a specific part of the second field (separated by dashes), you can use a combination of shell commands. Here's how you can achieve this:\n\n1. **Extract the relevant part of the second field**: Use `awk` to extract the part of the second field starting from the second letter.\n2. **Sort the content**: Use `sort` with the `-n` option to sort numerically.\n\nHere is an",
+      "exact_match": false,
+      "is_command": true
+    },
+    {
+      "instruction": "display all the files in the current folder which are present in the path \"./sr*sc\"",
+      "expected": "find . -path './sr*sc'",
+      "generated": "To display all the files in the current folder that match the pattern `./sr*sc`, you can use the `ls` command with a wildcard. Here's how you can do it:\n\n```sh\nls ./sr*sc\n```\n\nThis command will list all files and directories in the current directory (`.`) whose names start with `sr` and end with `sc`.\n\nIf you want to include hidden files (those starting with a dot), you can use the `-a` option",
+      "exact_match": false,
+      "is_command": true
+    },
+    {
+      "instruction": "Convert all DOS files under and below the current directory to the Unix format",
+      "expected": "find . -type f -exec dos2unix {} {} \\;",
+      "generated": "To convert all DOS (CRLF) formatted text files under and below the current directory to Unix (LF) format, you can use the `dos2unix` utility in Unix/Linux environments. Here's how you can do it:\n\n1. **Install dos2unix**:\n   If `dos2unix` is not already installed on your system, you can install it using your package manager.\n\n   - On Debian/Ubuntu:\n     ```sh\n     sudo apt-get update\n     sudo apt",
+      "exact_match": false,
+      "is_command": true
+    },
+    {
+      "instruction": "Create a gzip archive file  of all *.log files under $sourcePath",
+      "expected": "find $sourcePath -type f -name \"*.log\" -exec tar -uvf $tarFile {} \\;",
+      "generated": "To create a gzip archive file of all `.log` files under the specified `$sourcePath`, you can use the `tar` command in combination with `gzip`. Here's how you can do it:\n\n```bash\n# Define the source path\nsourcePath=\"/path/to/your/logs\"\n\n# Create a tar.gz archive of all .log files in the source directory\ntar -czvf logs.tar.gz --files-from <(find \"$sourcePath\" -type f -name \"*.log\")",
+      "exact_match": false,
+      "is_command": true
+    },
+    {
+      "instruction": "Search for all .mp3 files in the /mnt/usb directory tree",
+      "expected": "find /mnt/usb -name  \"*.mp3\" -print",
+      "generated": "To search for all `.mp3` files in the `/mnt/usb` directory tree, you can use the `find` command in a terminal. Here is how you can do it:\n\n```bash\nfind /mnt/usb -type f -name \"*.mp3\"\n```\n\nExplanation:\n- `find`: The command used to search for files and directories.\n- `/mnt/usb`: The root directory where the search will start.\n- `-type f`: This option tells `find`",
+      "exact_match": false,
+      "is_command": true
+    },
+    {
+      "instruction": "Split the output of \"ls\" into files of at most 500 lines each with prefix \"outputXYZ.\"",
+      "expected": "ls | split -l 500 - outputXYZ.",
+      "generated": "To split the output of the `ls` command into files of at most 500 lines each with a prefix like \"outputXYZ.\", you can use a combination of shell commands in Unix-like systems. Here's how you can do it:\n\n1. First, list all the files and count them.\n2. Then, split the list into chunks of 500 lines each.\n3. Finally, save each chunk to a file with the desired prefix.\n\nHere is an example script that",
+      "exact_match": false,
+      "is_command": true
+    },
+    {
+      "instruction": "Search appended data in \"logfile.log\" for \"something\" with a timeout of 3 seconds",
+      "expected": "tail -f logfile.log | grep --line-buffered \"something\" | read -t 3",
+      "generated": "To search for the string \"something\" in the file `logfile.log` and wait for up to 3 seconds before timing out, you can use various command-line tools depending on your operating system. Below are examples for both Linux/Unix and Windows.\n\n### Linux/Unix\n\nYou can use the `grep` command combined with `timeout` (or `gtimeout` if you're using macOS) to achieve this:\n\n```sh\ntimeout 3 grep -m 1 'something' logfile",
+      "exact_match": false,
+      "is_command": true
+    },
+    {
+      "instruction": "Find files in the current directory and below that are 2000 kB in size",
+      "expected": "find . -size 2000k -print",
+      "generated": "To find files in the current directory and below that are 2000 kB (kilobytes) in size, you can use the `find` command in Unix-like operating systems. Here's how you can do it:\n\n```sh\nfind . -type f -size +2000k\n```\n\nExplanation:\n- `find`: The command used to search for files and directories.\n- `.`: The starting point of the search, which is the current directory.\n-",
+      "exact_match": false,
+      "is_command": true
+    },
+    {
+      "instruction": "Find all files under $x directory and set read-write permission for owner and group and no permission for other for those files",
+      "expected": "find ${x} -type f -exec chmod ug=rw,o= '{}' \\;",
+      "generated": "To find all files under a specific directory (`$x`) and set the appropriate permissions (read-write for the owner and group, and no permissions for others), you can use the `find` command in combination with the `chmod` command in a Unix-like operating system.\n\nHere's how you can do it:\n\n1. **Replace `$x` with the actual path of the directory** you want to operate on.\n2. Use the following command:\n\n```bash\nfind /path/to/directory",
+      "exact_match": false,
+      "is_command": true
+    },
+    {
+      "instruction": "display all the configuration files in \"/etc\" folder along with their last access and modified timestamps",
+      "expected": "find /etc -name \"*.conf\" -printf \"%f accessed %AF %Ar, modified %TF %Tr\\n\"",
+      "generated": "To display all the configuration files in the `/etc` folder along with their last access and modified timestamps, you can use the `ls` command with appropriate options. Here's how you can do it:\n\n```sh\nls -l --time-style=full-iso /etc/*.conf\n```\n\nExplanation:\n- `-l`: Use a long listing format.\n- `--time-style=full-iso`: Display the time in ISO 8601 format (e.g., `2",
+      "exact_match": false,
+      "is_command": true
+    },
+    {
+      "instruction": "Recursively list contents of the current directory in a tree-like format",
+      "expected": "tree",
+      "generated": "To recursively list the contents of the current directory in a tree-like format, you can use the `tree` command in Unix-based systems (Linux, macOS). If the `tree` command is not installed on your system, you can install it using your package manager.\n\nHere's how you can do it:\n\n1. **Install the `tree` command** (if it's not already installed):\n   - On Debian/Ubuntu:\n     ```sh\n     sudo apt-get update\n     sudo apt",
+      "exact_match": false,
+      "is_command": true
+    },
+    {
+      "instruction": "Find the top 5 big files",
+      "expected": "find . -type f -exec ls -s {} \\; | sort -n -r | head -5",
+      "generated": "To find the top 5 largest files on your system, you can use various commands depending on the operating system you are using. Below are examples for both Linux and Windows.\n\n### Linux\n\n1. **Using `du` (Disk Usage) Command:**\n   ```bash\n   du -ah --max-depth=1 /path/to/search | sort -hr | head -n 6\n   ```\n   - `-a`: Show all files.\n   - `-h`: Human-readable format (",
+      "exact_match": false,
+      "is_command": true
+    },
+    {
+      "instruction": "find all the xml files in the current folder which are present in the pattern text file",
+      "expected": "find . -name \"*.xml\" -exec grep -HFf < {} \\;",
+      "generated": "To find all XML files in the current folder that match patterns specified in a text file, you can use a combination of shell commands and scripting. Below is an example using Bash:\n\n1. **Create a text file with your patterns**:\n   Let's assume your text file is named `patterns.txt` and contains one pattern per line.\n\n2. **Write a script to find matching XML files**:\n   Create a Bash script named `find_xml.sh` with the following content:\n\n```bash",
+      "exact_match": false,
+      "is_command": true
+    },
+    {
+      "instruction": "Find all regular files in the current directory tree that are not readable by anyone",
+      "expected": "find . -type f ! -perm -444",
+      "generated": "To find all regular files in the current directory tree that are not readable by anyone, you can use the `find` command in combination with the `-type f` option to specify regular files and the `-perm -u=r,g=r,o=r` option to check for read permissions for the user, group, and others.\n\nHere's how you can do it:\n\n```bash\nfind . -type f ! -perm -u=r,g=r,o=r\n```\n\nExplanation:\n- `.`:",
+      "exact_match": false,
+      "is_command": true
+    },
+    {
+      "instruction": "Find all directories that do not contain \"main.cpp\"",
+      "expected": "diff <(find . -exec readlink -f {} \\; | sed 's/\\(.*\\)\\/.*$/\\1/' | sort | uniq) <(find . -name main.cpp  -exec readlink -f {} \\; | sed 's/\\(.*\\)\\/.*$/\\1/' | sort | uniq) | sed -n 's/< \\(.*\\)/\\1/p'",
+      "generated": "To find all directories that do not contain `main.cpp`, you can use a combination of shell commands in Unix-like systems (Linux, macOS). Here's a step-by-step approach:\n\n1. **List all directories**: Use the `find` command to list all directories.\n2. **Check for the presence of `main.cpp`**: For each directory, check if `main.cpp` exists.\n3. **Filter out directories containing `main.cpp`**: Use conditional logic to exclude directories that contain",
+      "exact_match": false,
+      "is_command": true
+    },
+    {
+      "instruction": "Print the last 10 lines of \"great-big-file.log\"",
+      "expected": "tail great-big-file.log",
+      "generated": "To print the last 10 lines of a file named `great-big-file.log`, you can use the `tail` command in Unix/Linux environments. Here is how you can do it:\n\n```sh\ntail -n 10 great-big-file.log\n```\n\nThis command will display the last 10 lines of the file `great-big-file.log`. If you are using a different operating system or environment that does not support the `tail` command, please let me know, and",
+      "exact_match": false,
+      "is_command": true
+    }
+  ],
+  "exact_match_rate": 0.0,
+  "command_only_rate": 0.9714751426242869
+}

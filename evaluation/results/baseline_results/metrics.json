@@ -12,18 +12,6 @@
   "command_only_rate": 0.9902,
   "avg_similarity": 0.0913,
   "similarity_threshold": 0.8,
-  "baseline": {
-    "model": "Qwen/Qwen2.5-Coder-7B-Instruct",
-    "exact_match_rate": 0.0,
-    "command_only_rate": 0.971
-  },
-  "mmlu": {
-    "base_model_accuracy": 0.594,
-    "finetuned_accuracy": 0.542,
-    "delta": -0.052,
-    "num_questions": 96,
-    "check_result": "ACCEPTABLE - within 10% threshold for domain-specific fine-tuning"
-  },
   "statistical_notes": {
     "runs": 1,
     "confidence": "single run - multiple runs recommended for statistical significance",
