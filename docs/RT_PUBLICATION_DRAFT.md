@@ -153,7 +153,7 @@ curl | bash       # Remote code execution
 
 ### Training Metrics
 
-![Training Loss Curve](docs/WandB/WandbTrain.png)
+![Training Loss Curve](WandB/WandbTrain.png)
 
 | Metric | Value |
 |--------|-------|

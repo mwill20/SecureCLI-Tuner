@@ -53,16 +53,7 @@
 
 ## Architecture
 
-```
-Natural Language → Router → Generator (LLM) → CommandRisk Engine → Secure Wrapper → Execution
-                                                      ↓
-                              ┌───────────────────────┼───────────────────────┐
-                              ↓                       ↓                       ↓
-                         Deterministic           Heuristic              Semantic
-                         (17 regex)            (MITRE scoring)     (AST + CodeBERT)
-                              ↓                       ↓                       ↓
-                         SigmaHQ YAML            MITRE ATT&CK         OWASP ASI
-```
+![SecureCLI-Tuner Architecture](docs/architecture.png)
 
 ### Three Guardrail Layers
 

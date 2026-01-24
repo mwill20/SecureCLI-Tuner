@@ -11,6 +11,11 @@ __pycache__/
 .idea/
 *.swp
 
+# AI Tool Configurations (local development only)
+.agent/
+.claude/
+.gemini/
+
 # Model artifacts
 *.bin
 *.safetensors
@@ -39,5 +44,15 @@ Thumbs.db
 *.key
 *.pem
 
+# Binary files
+*.pdf
+
+# Placeholder files  
+*.placeholder
+
+# Temporary files
+tmp_*
+
 # Training runs
 docs/training/runs/**/*.zip
+

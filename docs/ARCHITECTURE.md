@@ -6,24 +6,16 @@ SecureCLI-Tuner V2 implements a **Zero-Trust Security Kernel** for Natural Langu
 
 ## Core Architecture Diagram
 
-```mermaid
-graph TD
-    User([User Prompt]) --> Generator[Qwen2.5-Coder-7B LoRA]
-    Generator --> RawOutput[Raw CLI Command]
-    
-    subgraph CommandRisk Engine
-        RawOutput --> L1[Layer 1: Deterministic]
-        L1 -->|Pass| L2[Layer 2: Heuristic]
-        L2 -->|Pass| L3[Layer 3: Semantic]
-        
-        L1 -->|Block| Monitor[W&B Security Monitor]
-        L2 -->|Block| Monitor
-        L3 -->|Block| Monitor
-    end
-    
-    L3 -->|Verified Safe| Exec[Secure Execution Wrapper]
-    Monitor --> Audit[Audit Trail / logs]
-```
+![SecureCLI-Tuner Architecture](architecture.png)
+
+**Data Flow:**
+
+1. **Natural Language Query** → Router processes and routes to LLM Generator
+2. **LLM Generator (Qwen 7B + LoRA)** → Generates command candidate  
+3. **CommandRisk Engine** → 3-layer validation (Deterministic → Heuristic → Semantic)
+4. **Output** → Safe command (approved) or BLOCKED (violation detected)
+
+**Security Mappings:** SigmaHQ YAML rules, MITRE ATT&CK, OWASP ASI Top 10
 
 ## Component Breakdown
 
