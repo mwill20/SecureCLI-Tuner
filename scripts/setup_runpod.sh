@@ -78,9 +78,21 @@ uv pip install --system --no-cache \
     "pydantic" "pysigma" "PyYAML" "wandb" "colorama" \
     "packaging<26.0,>=24.0"
 
-# Install axolotl WITH its dependencies (it knows what versions it needs)
-echo "  Installing Axolotl with full dependencies..."
-uv pip install --system --no-cache "axolotl==0.10.0"
+# Install axolotl but prevent it from upgrading PyTorch
+echo "  Installing Axolotl (preventing PyTorch downgrades)..."
+uv pip install --system --no-cache \
+    --no-deps "axolotl==0.10.0"
+
+# Install axolotl's other dependencies manually (without torch override)
+echo "  Installing Axolotl dependencies..."
+uv pip install --system --no-cache \
+    "peft>=0.13.0" \
+    "accelerate>=0.34.0" \
+    "transformers>=4.57.6" \
+    "datasets>=3.0.0" \
+    "trl>=0.11.1" \
+    "sentencepiece" \
+    "protobuf"
 
 # Fix Axolotl Telemetry Bug
 AXOLOTL_PATH=$(python -c "import axolotl; import os; print(os.path.dirname(axolotl.__file__))")
