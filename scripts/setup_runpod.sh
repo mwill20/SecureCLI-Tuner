@@ -91,10 +91,10 @@ uv pip install --system --no-cache \
 
 # Install axolotl and its contribs WITHOUT torch dependencies
 echo "  Installing Axolotl (with contribs, excluding torch)..."
-uv pip install --system --no-cache \
-    --no-deps "axolotl==0.10.0" \
-    --no-deps "axolotl-contribs-lgpl==0.0.6" \
-    --no-deps "axolotl-contribs-mit==0.0.3"
+uv pip install --system --no-cache --no-deps \
+    "axolotl==0.10.0" \
+    "axolotl-contribs-lgpl==0.0.6" \
+    "axolotl-contribs-mit==0.0.3"
 
 # Fix Axolotl Telemetry Bug
 AXOLOTL_PATH=$(python -c "import axolotl; import os; print(os.path.dirname(axolotl.__file__))")
