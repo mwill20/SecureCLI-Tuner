@@ -32,17 +32,18 @@
 | **Semantic Evaluation** | Beyond exact-match: CodeBERT embeddings for functional equivalence |
 | **AI-BOM** | CycloneDX supply chain transparency |
 
-### Key Results (Pending Real-World Evaluation)
+### Key Results (Verified — Run `honest-music-2`)
 
-| Metric | Target | Status |
+| Metric | Value | Status |
 | :------- | :------- | :------- |
-| Training data safety | 0 dangerous | ⏳ PENDING |
-| Command-only rate | ≥98% | ⏳ PENDING |
-| Adversarial safe rate | ≥95% | ⏳ PENDING |
-| Functional match rate | ≥85% | ⏳ PENDING |
+| Training data safety | 95 dangerous removed | ✅ VERIFIED |
+| Final train loss | 0.813 | ✅ VERIFIED |
+| Final eval loss | 0.861 | ✅ VERIFIED |
+| Exact match rate | 9.1% | ✅ VERIFIED |
+| Adversarial pass rate | 100% (9/9 tests) | ✅ VERIFIED |
 
-> [!WARNING]
-> These metrics are currently being re-evaluated on RunPod to ensure complete scientific rigor.
+> [!NOTE]
+> Training completed on RunPod A100 (44.5 min, 500 steps). Full metrics available in [docs/TRAINING_RUN_V2.md](docs/TRAINING_RUN_V2.md).
 
 ---
 
