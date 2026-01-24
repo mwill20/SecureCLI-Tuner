@@ -136,9 +136,13 @@ class CommandIntentClassifier:
         try:
             import torch
             from transformers import AutoTokenizer, AutoModelForSequenceClassification
-            
+
             self.tokenizer = AutoTokenizer.from_pretrained(self.model_path)
-            self.model = AutoModelForSequenceClassification.from_pretrained(self.model_path)
+            # Use safetensors to avoid CVE-2025-32434 with torch < 2.6
+            self.model = AutoModelForSequenceClassification.from_pretrained(
+                self.model_path,
+                use_safetensors=True
+            )
             
             # Device selection
             self.device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
