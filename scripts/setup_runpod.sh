@@ -58,13 +58,18 @@ rm -rf /usr/local/lib/python3.11/dist-packages/axolotl*
 
 # 3. Fresh installation using UV's lightning-fast resolver with NO CACHE
 echo "  Performing clean-room installation of validated stack..."
-# We relax the packaging constraint to let UV find the best match
-# Use --extra-index-url for PyTorch so regular PyPI is still available for transformers
+
+# CRITICAL: Install PyTorch + torchvision together from the same index first
+echo "  Installing PyTorch stack from CUDA index..."
 uv pip install --system --force-reinstall --no-cache \
-    --extra-index-url https://download.pytorch.org/whl/cu124 \
-    --index-strategy unsafe-best-match \
+    --index-url https://download.pytorch.org/whl/cu124 \
     "torch==2.5.1+cu124" \
     "torchvision==0.20.1+cu124" \
+    "torchaudio==2.5.1+cu124"
+
+# Now install the rest from PyPI
+echo "  Installing transformers and training libraries..."
+uv pip install --system --no-cache \
     "transformers>=4.57.6" \
     "peft>=0.17.1" \
     "accelerate>=1.2.1" \
