@@ -62,6 +62,7 @@ echo "  Performing clean-room installation of validated stack..."
 # Use --extra-index-url for PyTorch so regular PyPI is still available for transformers
 uv pip install --system --force-reinstall --no-cache \
     --extra-index-url https://download.pytorch.org/whl/cu124 \
+    --index-strategy unsafe-best-match \
     "torch==2.5.1+cu124" \
     "torchvision==0.20.1+cu124" \
     "transformers>=4.57.6" \
