@@ -103,11 +103,21 @@ python scripts/download_datasets.py
 python scripts/prepare_training_data.py
 
 # -----------------------------------------------------------------------------
-# Step 6: Final Verification
+# Step 6: Final Verification (with self-healing)
 # -----------------------------------------------------------------------------
 echo ""
 echo "Step 6/6: Verifying final environment..."
-python -c "import transformers; import peft; import torch; print('  ✓ All modules importable')"
+
+# Test the specific import that was failing
+if python -c "from transformers import PreTrainedModel; from peft import PeftModel; print('  ✓ All critical imports successful')"; then
+    echo "  ✓ Environment verified!"
+else
+    echo "  ⚠ Import failed, attempting reinstall..."
+    pip uninstall -y transformers peft 2>/dev/null || true
+    rm -rf /usr/local/lib/python3.11/dist-packages/transformers* /usr/local/lib/python3.11/dist-packages/peft*
+    uv pip install --system --force-reinstall --no-cache "transformers>=4.57.6" "peft>=0.17.1"
+    python -c "from transformers import PreTrainedModel; from peft import PeftModel; print('  ✓ All critical imports successful after reinstall')"
+fi
 
 echo ""
 echo "╔════════════════════════════════════════════════════════════════╗"
