@@ -41,29 +41,33 @@ apt-get install -y -qq shellcheck
 echo "  ✓ Shellcheck installed"
 
 # -----------------------------------------------------------------------------
-# Step 2: Fix Python environment (handle version conflicts)
+# Step 2: Fix Python environment (Nuclear Option)
 # -----------------------------------------------------------------------------
 echo ""
-echo "Step 2/6: Setting up Python environment..."
+echo "Step 2/6: Setting up Python environment (Nuclear Option)..."
 
 # Upgrade pip
 pip install -q --upgrade pip
 
-# Fix torch/torchvision compatibility (Stable versions for cu124)
-pip install -q --root-user-action=ignore torch==2.4.1+cu124 torchvision==0.19.1+cu124 \
+# Purge any existing problematic installations
+echo "  Purging existing packages to ensure clean slate..."
+pip uninstall -q -y torch torchvision torchaudio transformers axolotl peft bitsandbytes 2>/dev/null || true
+
+# Install specific, validated stack for cu124 (Torch 2.5.1 + Torchvision 0.20.1)
+echo "  Installing validated Torch/Torchvision stack..."
+pip install -q --root-user-action=ignore torch==2.5.1+cu124 torchvision==0.20.1+cu124 \
     --index-url https://download.pytorch.org/whl/cu124 --force-reinstall
 
-# Verify the fix
-python -c "import torch; import torchvision; print(f'  torch={torch.__version__}, torchvision={torchvision.__version__}')"
-
-# Install core dependencies (without changing torch)
+# Install core dependencies with specific version of packaging to resolve conflicts
+pip install -q "packaging<26.0,>=25.0" # Match pysigma and axolotl 0.10 needs
 pip install -q datasets transformers pydantic pysigma PyYAML
 
 # Install training dependencies
 pip install -q accelerate bitsandbytes wandb
 
-# Install axolotl (for training)
-pip install -q axolotl==0.10.0 --no-deps
+# Install axolotl 0.10.0 (pinned and forced)
+echo "  Installing Axolotl 0.10.0..."
+pip install -q axolotl==0.10.0 --no-deps --force-reinstall
 
 # Fix Axolotl Telemetry Bug (Missing whitelist.yaml)
 AXOLOTL_PATH=$(python -c "import axolotl; import os; print(os.path.dirname(axolotl.__file__))")
