@@ -15,8 +15,8 @@ cd SecureCLI-Tuner
 # Create your authentication file
 # Replace 'your_key' with your actual keys from wandb.ai and huggingface.co
 cat > .env << 'EOF'
-WANDB_API_KEY=your_wandb_api_key_here
-HF_TOKEN=your_huggingface_token_here
+WANDB_API_KEY=Your_WandB_API_Key_Here
+HF_TOKEN=Your_Huggingface_Token_Here
 EOF
 ```
 
