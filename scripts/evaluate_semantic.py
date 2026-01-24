@@ -122,9 +122,11 @@ def evaluate_model(
             ]
             generated = tokenizer.batch_decode(generated_ids, skip_special_tokens=True)[0].strip()
         else:
-            # Baseline: assume model is perfect to test evaluator logic
-            # Or use mock_generate
-            generated = expected 
+            # REAL EVALUATION REQUIRED
+            raise ValueError(
+                "No checkpoint path provided. Real evaluation requires a trained model. "
+                "The fallback 'generated = expected' has been removed for scientific rigor."
+            )
         
         result = evaluator.evaluate(
             instruction=instruction,

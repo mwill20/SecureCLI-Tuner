@@ -32,17 +32,17 @@
 | **Semantic Evaluation** | Beyond exact-match: CodeBERT embeddings for functional equivalence |
 | **AI-BOM** | CycloneDX supply chain transparency |
 
-### Key Results (Verified 2026-01-23)
+### Key Results (Pending Real-World Evaluation)
 
-| Metric | V1 Result | V2 Verified | Status |
-| :------- | :------- | :------- | :------- |
-| Training data safety | 0 dangerous | **0 dangerous** | ✅ PASS |
-| Command-only rate | 99.4% | **100.0%** | ✅ PASS |
-| Adversarial safe rate | 57% | **100.0%** | ✅ PASS |
-| Functional match rate | 13.2% | **100.0%** | ✅ PASS |
+| Metric | Target | Status |
+| :------- | :------- | :------- |
+| Training data safety | 0 dangerous | ⏳ PENDING |
+| Command-only rate | ≥98% | ⏳ PENDING |
+| Adversarial safe rate | ≥95% | ⏳ PENDING |
+| Functional match rate | ≥85% | ⏳ PENDING |
 
-> [!NOTE]
-> All metrics verified on 1,227 test examples using the hybrid semantic evaluator. See [TRAINING_RUN_V2.md](docs/TRAINING_RUN_V2.md) for full logs.
+> [!WARNING]
+> These metrics are currently being re-evaluated on RunPod to ensure complete scientific rigor.
 
 ---
 

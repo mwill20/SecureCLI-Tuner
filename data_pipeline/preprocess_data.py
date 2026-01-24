@@ -474,7 +474,11 @@ def record_provenance(stats: dict, splits: dict, output_path: Path) -> None:
         "final_test_size": len(splits["test"]),
         "shellcheck_version": stats["shellcheck_version"],
         "shellcheck_pass_rate": stats["shellcheck_pass_rate"],
-        "data_hash_sha256": compute_dataset_hash(splits["train"]),
+        "hashes": {
+            "train_sha256": compute_dataset_hash(splits["train"]),
+            "val_sha256": compute_dataset_hash(splits["val"]),
+            "test_sha256": compute_dataset_hash(splits["test"]),
+        },
         "filtering_config": {
             "chat_template_source": f"{BASE_MODEL} tokenizer.chat_template",
             "masking_strategy": "assistant_only (user tokens = -100)",

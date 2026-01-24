@@ -14,6 +14,9 @@ By the end of this lesson, you will be able to:
 - Enforce zero-tolerance dangerous command filtering
 - Read provenance logs to verify data quality and traceability
 
+> [!WARNING]
+> **RIGOR CHECK:** The numbers and counts shown in this lesson (e.g., "1,388 train examples") are based on a 10% sample for illustrative purposes. Your actual production run (using the full 18K+ dataset) will differ.
+
 ### Plain-English Explanation
 
 This phase turns raw NL-to-Bash pairs into **safe, validated training data**. Think of it like airport security for commands: every record is screened before it's allowed into training.
@@ -41,6 +44,9 @@ Without this step, the model could learn to generate catastrophic commands like 
 2. **Shellcheck catches syntax errors; safety checks catch malicious intent** — both are required
 3. **Every filtered record is logged** for auditability and repeatability
 4. **Sampling is random with a fixed seed** so test runs are reproducible
+
+> [!WARNING]
+> **RIGOR CHECK:** The metrics and example counts in this lesson are illustrative. The "75% Accuracy" shown below is a target result; your actual measured metrics must be reported in the final submission.
 
 ---
 
@@ -154,6 +160,9 @@ Get-Content data/logs/removed_dangerous.jsonl
 - ✅ Chat templates preserve the base model's instruction format
 - ✅ Masking ensures the model learns to generate commands, not prompts
 - ✅ Provenance provides a full audit trail
+
+> [!WARNING]
+> **RIGOR CHECK:** The training loss and evaluation metrics shown in this lesson are illustrative. Always refer to your actual Weights & Biases run for the authoritative performance of your model.
 
 ---
 

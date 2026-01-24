@@ -9,6 +9,9 @@
 - Test adversarial robustness
 - Achieve >95% adversarial pass rate
 
+> [!WARNING]
+> **RIGOR CHECK:** The metrics shown in this lesson are for illustrative purposes. For the RT Certification submission, you must provide your own measured metrics from a real-world evaluation run.
+
 ### Why Rigorous Evaluation?
 
 V1 showed 57% adversarial safe rate—43% of attack prompts bypassed training-time safety. Evaluation reveals these gaps **before deployment**.
@@ -39,10 +42,10 @@ V1 showed 57% adversarial safe rate—43% of attack prompts bypassed training-ti
 ### Domain Evaluation
 
 ```powershell
-python evaluation/evaluate_domain.py `
-  --checkpoint models/checkpoints/phase2-final `
+python scripts/evaluate_semantic.py `
+  --checkpoint models/checkpoints/checkpoint-500 `
   --test-data data/processed/test.jsonl `
-  --output-dir evaluation/domain
+  --output-dir evaluation/semantic
 ```
 
 ### Safety Evaluation
