@@ -78,13 +78,8 @@ uv pip install --system --no-cache \
     "pydantic" "pysigma" "PyYAML" "wandb" "colorama" \
     "packaging<26.0,>=24.0"
 
-# Install axolotl but prevent it from upgrading PyTorch
-echo "  Installing Axolotl (preventing PyTorch downgrades)..."
-uv pip install --system --no-cache \
-    --no-deps "axolotl==0.10.0"
-
-# Install axolotl's other dependencies manually (without torch override)
-echo "  Installing Axolotl dependencies..."
+# Install axolotl dependencies first, then axolotl itself
+echo "  Installing Axolotl dependencies (excluding torch to prevent downgrades)..."
 uv pip install --system --no-cache \
     "peft>=0.13.0" \
     "accelerate>=0.34.0" \
@@ -93,6 +88,13 @@ uv pip install --system --no-cache \
     "trl>=0.11.1" \
     "sentencepiece" \
     "protobuf"
+
+# Install axolotl and its contribs WITHOUT torch dependencies
+echo "  Installing Axolotl (with contribs, excluding torch)..."
+uv pip install --system --no-cache \
+    --no-deps "axolotl==0.10.0" \
+    --no-deps "axolotl-contribs-lgpl==0.0.6" \
+    --no-deps "axolotl-contribs-mit==0.0.3"
 
 # Fix Axolotl Telemetry Bug
 AXOLOTL_PATH=$(python -c "import axolotl; import os; print(os.path.dirname(axolotl.__file__))")
