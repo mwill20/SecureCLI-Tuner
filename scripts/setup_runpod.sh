@@ -49,8 +49,8 @@ echo "Step 2/6: Setting up Python environment..."
 # Upgrade pip
 pip install -q --upgrade pip
 
-# Fix torch/torchvision compatibility (matching versions for cu124)
-pip install -q --root-user-action=ignore torch==2.6.0+cu124 torchvision==0.21.0+cu124 \
+# Fix torch/torchvision compatibility (Stable versions for cu124)
+pip install -q --root-user-action=ignore torch==2.4.1+cu124 torchvision==0.19.1+cu124 \
     --index-url https://download.pytorch.org/whl/cu124 --force-reinstall
 
 # Verify the fix
