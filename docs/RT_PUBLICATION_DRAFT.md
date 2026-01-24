@@ -41,6 +41,16 @@ I fine-tuned a model to convert natural language instructions into safe Bash/CLI
 2. Fine-tunes for the specific NL→Bash domain
 3. Adds runtime guardrails that validate every command before execution
 
+### System Architecture
+
+![SecureCLI-Tuner Architecture](architecture.png)
+
+The system uses a 3-layer "Defense in Depth" strategy:
+
+1. **Deterministic Layer:** Blocks 17 known dangerous regex patterns (e.g., `rm -rf /`)
+2. **Heuristic Layer:** Scores commands against MITRE ATT&CK patterns
+3. **Semantic Layer:** Uses CodeBERT embeddings to detect intent even in obfuscated commands
+
 ---
 
 ## 2. Dataset
