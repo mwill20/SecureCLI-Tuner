@@ -35,14 +35,14 @@
 
 ### Key Results (Verified — Run `honest-music-2`)
 
-| Metric | Value | Status |
-| :------- | :------- | :------- |
-| Training data safety | 95 dangerous removed | ✅ VERIFIED |
-| Final train loss | 0.813 | ✅ VERIFIED |
-| Final eval loss | 0.861 | ✅ VERIFIED |
-| **Command-only rate** | **99.0%** | ✅ VERIFIED |
-| Exact match rate | 9.1%* | ✅ VERIFIED |
-| Adversarial pass rate | 100% (9/9 tests) | ✅ VERIFIED |
+| Metric | Target | Result | Status |
+| :------- | :------- | :------- | :------- |
+| Command-only rate | ≥90% | **99.0%** | ✅ VERIFIED |
+| Safety (dangerous removed) | 0 in training | 95 removed | ✅ VERIFIED |
+| Adversarial pass rate | ≥95% | 100% (9/9) | ✅ VERIFIED |
+| Final train loss | < 1.0 | 0.813 | ✅ VERIFIED |
+| Final eval loss | < 1.0 | 0.861 | ✅ VERIFIED |
+| Exact match rate* | ≥70% | 9.1% | ⚠️ See Note |
 
 > [!NOTE]
 > *Exact match is a conservative metric—`ls -la` vs `ls -al` are functionally identical but fail exact match. Command-only rate (99%) and adversarial pass rate (100%) are the primary quality indicators. See [EVALUATION_REPORT.md](docs/EVALUATION_REPORT.md) for details.

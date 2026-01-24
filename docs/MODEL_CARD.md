@@ -46,6 +46,31 @@ pipeline_tag: text-generation
 
 ---
 
+## How to Use
+
+```python
+from transformers import AutoModelForCausalLM, AutoTokenizer
+from peft import PeftModel
+
+# Load base model and tokenizer
+base_model = "Qwen/Qwen2.5-Coder-7B-Instruct"
+tokenizer = AutoTokenizer.from_pretrained(base_model)
+model = AutoModelForCausalLM.from_pretrained(base_model, device_map="auto")
+
+# Load LoRA adapters
+model = PeftModel.from_pretrained(model, "mwill-AImission/SecureCLI-Tuner-V2")
+
+# Generate a command
+prompt = "List all running docker containers"
+messages = [{"role": "user", "content": prompt}]
+text = tokenizer.apply_chat_template(messages, tokenize=False, add_generation_prompt=True)
+inputs = tokenizer(text, return_tensors="pt").to(model.device)
+outputs = model.generate(**inputs, max_new_tokens=100)
+print(tokenizer.decode(outputs[0], skip_special_tokens=True))
+```
+
+---
+
 ## Training Data
 
 | Metric | Value |
