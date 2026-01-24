@@ -40,14 +40,24 @@ apt-get update -qq && apt-get install -y -qq shellcheck git
 echo "  ✓ System tools ready"
 
 # -----------------------------------------------------------------------------
-# Step 3: Fast Environment Setup (UV Mode)
+# Step 3: Fast Environment Setup (Deep Cleansing Mode)
 # -----------------------------------------------------------------------------
 echo ""
-echo "Step 3/6: Setting up Python environment via uv..."
+echo "Step 3/6: Deep cleansing Python environment..."
 
-# Force reinstall everything using uv's lightning-fast resolver
-# This effectively purges and aligns the stack
-uv pip install --system --force-reinstall \
+# 1. Purge via pip
+pip uninstall -q -y torch torchvision transformers axolotl peft bitsandbytes accelerate datasets 2>/dev/null || true
+
+# 2. Nuclear Strike: Manually remove suspected corrupted directories to avoid shadowing
+echo "  Removing corrupted package traces..."
+rm -rf /usr/local/lib/python3.11/dist-packages/transformers*
+rm -rf /usr/local/lib/python3.11/dist-packages/peft*
+rm -rf /usr/local/lib/python3.11/dist-packages/accelerate*
+rm -rf /usr/local/lib/python3.11/dist-packages/axolotl*
+
+# 3. Fresh installation using UV's lightning-fast resolver with NO CACHE
+echo "  Performing clean-room installation of validated stack..."
+uv pip install --system --force-reinstall --no-cache \
     --index-url https://download.pytorch.org/whl/cu124 \
     "torch==2.5.1+cu124" \
     "torchvision==0.20.1+cu124" \
