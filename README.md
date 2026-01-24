@@ -1,5 +1,7 @@
 # SecureCLI-Tuner
 
+![SecureCLI-Tuner Banner](docs/assets/banner.png)
+
 > **Zero-Trust Security Kernel for Agentic DevOps (Bash, Git, Docker)**
 
 [![OWASP ASI](https://img.shields.io/badge/OWASP-ASI%20Top%2010-blue)](https://owasp.org)

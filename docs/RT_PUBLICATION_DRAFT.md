@@ -1,5 +1,7 @@
 # SecureCLI-Tuner: A Security-First LLM for Agentic DevOps
 
+![SecureCLI-Tuner Banner](assets/banner.png)
+
 ## TL;DR
 
 SecureCLI-Tuner is a QLoRA fine-tuned LLM that generates safe Bash commands from natural language while preventing dangerous operations. This project demonstrates end-to-end LLM fine-tuning with a focus on security: filtering dangerous commands from training data, applying runtime validation guardrails, and achieving 100% adversarial attack blocking.

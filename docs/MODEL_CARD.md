@@ -15,7 +15,11 @@ pipeline_tag: text-generation
 
 # Model Card: SecureCLI-Tuner V2
 
+![SecureCLI-Tuner Banner](assets/banner.png)
+
 ## Model Details
+
+![SecureCLI-Tuner Architecture](architecture.png)
 
 | Property | Value |
 |----------|-------|
