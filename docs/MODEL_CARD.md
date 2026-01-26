@@ -1,42 +1,25 @@
 ---
-license: mit
 base_model: Qwen/Qwen2.5-Coder-7B-Instruct
-tags:
-  - bash
-  - cli
-  - security
-  - devops
-  - code-generation
-  - qlora
-language:
-  - en
-pipeline_tag: text-generation
-repo_url: https://github.com/mwill20/SecureCLI-Tuner
 library_name: peft
+pipeline_tag: text-generation
+tags:
+- axolotl
+- base_model:adapter:Qwen/Qwen2.5-Coder-7B-Instruct
+- transformers
+- qlora
+- code-generation
+- bash
+- cli
+- security
+- devops
+license: mit
 datasets:
-  - prabhanshubhowal/natural_language_to_linux
+- prabhanshubhowal/natural_language_to_linux
+language:
+- en
 metrics:
-  - exact_match
-  - code_eval
-model-index:
-  - name: SecureCLI-Tuner V2
-    results:
-      - task:
-          type: text-generation
-          name: CLI Command Generation
-        dataset:
-          name: SecureCLI-Tuner Eval Set (Held-Out)
-          type: custom
-        metrics:
-          - name: Command Validity
-            type: accuracy
-            value: 99.0
-          - name: Adversarial Safety Rate
-            type: accuracy
-            value: 100.0
-          - name: Exact Match
-            type: exact_match
-            value: 9.1
+- code_eval
+- exact_match
 ---
 
 # Model Card for SecureCLI-Tuner V2
@@ -51,13 +34,14 @@ SecureCLI-Tuner V2 is a **Zero-Trust Security Kernel** for Agentic DevOps. It is
 
 Unlike generic coding models, SecureCLI-Tuner V2 was trained on a filtered dataset with **95 dangerous command patterns removed** (e.g., `rm -rf /`, fork bombs) and is designed to operate within a 3-layer runtime guardrail system.
 
-- **Developed by:** mwill-AImission (Ready Tensor Certification Portfolio)
+- **Developed by:** Michael Williams mwill-AImission (Ready Tensor Certification Portfolio)
+- **Funded by:** Michael Williams
 - **Model type:** Causal Language Model (QLoRA Adapter)
 - **Language(s) (NLP):** English
 - **License:** MIT
 - **Finetuned from model:** Qwen/Qwen2.5-Coder-7B-Instruct
 
-### Model Sources
+### Model Sources [optional]
 
 - **Repository:** <https://github.com/mwill20/SecureCLI-Tuner>
 - **Demo:** [Coming Soon]
@@ -89,7 +73,9 @@ Unlike generic coding models, SecureCLI-Tuner V2 was trained on a filtered datas
 
 ### Recommendations
 
-Users should always deploy this model behind the **CommandRisk** validation layer described in the [GitHub Repository](https://github.com/mwill20/SecureCLI-Tuner). Do not give this model unchecked `sudo` access.
+Users should always deploy this model behind the **CommandRisk** validation layer described in the [GitHub Repository](https://github.com/mwill20/SecureCLI-Tuner).
+Do not give this model unchecked `sudo` access.
+Users (both direct and downstream) should be made aware of the risks, biases and limitations of the model. More information needed for further recommendations.
 
 ## How to Get Started with the Model
 
@@ -159,11 +145,21 @@ print(tokenizer.batch_decode(outputs, skip_special_tokens=True)[0])
 
 ## Evaluation
 
+<!-- This section describes the evaluation protocols and provides the results. -->
+
 ### Testing Data, Factors & Metrics
 
-**Testing Data:** 1,227 held-out examples from the cleaned dataset.
+#### Testing Data
 
-**Metrics:**
+1,227 held-out examples from the cleaned dataset.
+
+#### Factors
+
+<!-- These are the things the evaluation is disaggregating by, e.g., subpopulations or domains. -->
+
+[More Information Needed]
+
+#### Metrics
 
 - **Command Validity:** 99.0% (Parsable Bash)
 - **Adversarial Pass Rate:** 100% (Blocks 9/9 attack categories)
@@ -179,6 +175,16 @@ print(tokenizer.batch_decode(outputs, skip_special_tokens=True)[0])
 
 The model demonstrates a massive improvement in safety and formatting compliance compared to the base model.
 
+#### Summary
+
+[More Information Needed]
+
+## Model Examination [optional]
+
+<!-- Relevant interpretability work for the model goes here -->
+
+[More Information Needed]
+
 ## Environmental Impact
 
 - **Hardware Type:** NVIDIA A100 40GB
@@ -186,6 +192,8 @@ The model demonstrates a massive improvement in safety and formatting compliance
 - **Cloud Provider:** RunPod
 - **Compute Region:** N/A (Decentralized)
 - **Carbon Emitted:** Negligible (< 0.1 kg CO2eq)
+
+Carbon emissions can be estimated using the [Machine Learning Impact calculator](https://mlco2.github.io/impact#compute) presented in [Lacoste et al. (2019)](https://arxiv.org/abs/1910.09700).
 
 ## Technical Specifications
 
@@ -198,7 +206,17 @@ Qwen2.5-Coder is a Transformer-based Causal Language Model. This fine-tune adds 
 - **Orchestration:** Axolotl
 - **Container:** Docker (RunPod PyTorch 2.4 image)
 
-## Citation
+#### Hardware
+
+[More Information Needed]
+
+#### Software
+
+[More Information Needed]
+
+## Citation [optional]
+
+<!-- If there is a paper or blog post introducing the model, the APA and Bibtex information for that should go in this section. -->
 
 **BibTeX:**
 
@@ -211,6 +229,22 @@ Qwen2.5-Coder is a Transformer-based Causal Language Model. This fine-tune adds 
 }
 ```
 
+**APA:**
+
+[More Information Needed]
+
+## Glossary [optional]
+
+[More Information Needed]
+
+## More Information [optional]
+
+[More Information Needed]
+
+## Model Card Authors [optional]
+
+[More Information Needed]
+
 ## Model Card Contact
 
 For questions, open an issue on the [GitHub Repository](https://github.com/mwill20/SecureCLI-Tuner).
@@ -218,6 +252,3 @@ For questions, open an issue on the [GitHub Repository](https://github.com/mwill
 ## Framework versions
 
 - PEFT 0.18.1
-- Transformers 4.48.0
-- Pytorch 2.6.0
-- Axolotl 0.5.x
