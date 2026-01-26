@@ -155,9 +155,10 @@ print(tokenizer.batch_decode(outputs, skip_special_tokens=True)[0])
 
 #### Factors
 
-<!-- These are the things the evaluation is disaggregating by, e.g., subpopulations or domains. -->
+The evaluation is disaggregated by:
 
-[More Information Needed]
+- **Command Category:** General operational commands vs. Dangerous vectors (destructive, obfuscated).
+- **Difficulty:** Direct NLP instructions vs. Adversarial prompts designed to bypass guardrails.
 
 #### Metrics
 
@@ -177,13 +178,11 @@ The model demonstrates a massive improvement in safety and formatting compliance
 
 #### Summary
 
-[More Information Needed]
+SecureCLI-Tuner V2 significantly improves upon the base Qwen2.5-Coder-7B model in terms of **safety** (100% block rate for adversarial attacks) and **command validity** (+1.9%). While strict "Exact Match" scores remain low (9.1%) due to the variability of valid Bash syntax (e.g., `ls -la` vs `ls -al`), the functional correctness is high. The model demonstrates a minor trade-off in general knowledge (MMLU -5.2%) to achieve this domain specialization.
 
 ## Model Examination [optional]
 
-<!-- Relevant interpretability work for the model goes here -->
-
-[More Information Needed]
+Model examination focused on behavioral analysis via the **Adversarial Test Suite** rather than internal interpretability (e.g., attention maps). The model consistently activates refusal behaviors when presented with dangerous intents, even when obfuscated (e.g., base64 encoding).
 
 ## Environmental Impact
 
@@ -208,11 +207,15 @@ Qwen2.5-Coder is a Transformer-based Causal Language Model. This fine-tune adds 
 
 #### Hardware
 
-[More Information Needed]
+- **GPU:** 1x NVIDIA A100 (40GB VRAM)
+- **Platform:** RunPod Cloud Instance
 
 #### Software
 
-[More Information Needed]
+- **Orchestration:** Axolotl v0.5.x
+- **Core:** PyTorch 2.4.0, Transformers 4.45.0
+- **Efficiency:** PEFT 0.18.1, BitsAndBytes 0.44.0
+- **CUDA:** 12.1
 
 ## Citation [optional]
 
@@ -231,19 +234,22 @@ Qwen2.5-Coder is a Transformer-based Causal Language Model. This fine-tune adds 
 
 **APA:**
 
-[More Information Needed]
+Williams, M. (2026). *SecureCLI-Tuner V2: A Security-First LLM for Agentic DevOps*. Ready Tensor Certification Portfolio. <https://huggingface.co/mwill-AImission/SecureCLI-Tuner-V2>
 
 ## Glossary [optional]
 
-[More Information Needed]
+- **QLoRA:** Quantized Low-Rank Adaptation (Peft).
+- **ASI:** Artificial Super Intelligence (OWASP Top 10 Security category).
+- **CommandRisk:** A custom 3-layer validation engine for shell commands.
+- **Defense-in-Depth:** Using multiple layers of security (Model Refusal + Runtime Regex + Heuristics).
 
 ## More Information [optional]
 
-[More Information Needed]
+For full details on the CommandRisk engine, the Data Preparation Pipeline, and the "Defense in Depth" strategy, please visit the [GitHub Repository](https://github.com/mwill20/SecureCLI-Tuner).
 
 ## Model Card Authors [optional]
 
-[More Information Needed]
+Michael Williams (mwill-AImission)
 
 ## Model Card Contact
 
