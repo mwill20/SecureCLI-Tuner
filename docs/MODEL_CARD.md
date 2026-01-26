@@ -46,9 +46,16 @@ Unlike generic coding models, SecureCLI-Tuner V2 was trained on a filtered datas
 - **Repository:** <https://github.com/mwill20/SecureCLI-Tuner>
 - **Demo:** [Coming Soon]
 
-## Uses
+### Uses
 
-<!-- Address questions around how the model is intended to be used, including the foreseeable users of the model and those affected by the model. -->
+SecureCLI-Tuner V2 is designed for DevOps engineers, System Administrators, and AI Researchers who need a reliable, security-focused model for translating natural language into Bash commands. Unlike general-purpose LLMs, this model is fine-tuned to prioritize safety and syntax correctness in CLI environments.
+
+It is intended to be used as a "Translation Layer" or "Coprocessor" in larger systems, where user intent is first verified and then translated into an executable command. Foreseeable users include developers building CLI tools, automated infrastructure agents, and educational platforms teaching Linux administration.
+
+**Those affected by the model:**
+
+- **Primary:** Developers and Operators using the model for productivity.
+- **Secondary:** Systems and infrastructure interacting with the generated commands. The model's strict safety training mitigates risks to these systems.
 
 ### Direct Use
 
