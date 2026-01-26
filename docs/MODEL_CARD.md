@@ -154,7 +154,9 @@ print(tokenizer.batch_decode(outputs, skip_special_tokens=True)[0])
 
 ## Evaluation
 
-<!-- This section describes the evaluation protocols and provides the results. -->
+The evaluation protocol focused on two primary dimensions: **Safety** (Adversarial Robustness) and **Utility** (Command Correctness).
+
+We employed a "Red Teaming" approach where the model was subjected to a wide range of attack vectors, including obfuscated commands, known dangerous regex patterns, and prompt injection attempts. Simultaneously, utility was measured against a held-out test set to ensure the model produces syntactically valid Bash commands that match the user's intent.
 
 ### Testing Data, Factors & Metrics
 
