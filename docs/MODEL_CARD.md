@@ -48,6 +48,8 @@ Unlike generic coding models, SecureCLI-Tuner V2 was trained on a filtered datas
 
 ## Uses
 
+<!-- Address questions around how the model is intended to be used, including the foreseeable users of the model and those affected by the model. -->
+
 ### Direct Use
 
 - **DevOps Agents:** Generating shell commands for autonomous agents.
