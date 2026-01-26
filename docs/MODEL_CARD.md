@@ -12,6 +12,31 @@ language:
   - en
 pipeline_tag: text-generation
 repo_url: https://github.com/mwill20/SecureCLI-Tuner
+library_name: peft
+datasets:
+  - prabhanshubhowal/natural_language_to_linux
+metrics:
+  - exact_match
+  - code_eval
+model-index:
+  - name: SecureCLI-Tuner V2
+    results:
+      - task:
+          type: text-generation
+          name: CLI Command Generation
+        dataset:
+          name: SecureCLI-Tuner Eval Set (Held-Out)
+          type: custom
+        metrics:
+          - name: Command Validity
+            type: accuracy
+            value: 99.0
+          - name: Adversarial Safety Rate
+            type: accuracy
+            value: 100.0
+          - name: Exact Match
+            type: exact_match
+            value: 9.1
 ---
 
 # Model Card for SecureCLI-Tuner V2
