@@ -150,10 +150,10 @@ The 5.2% drop is a standard and acceptable trade-off for specializing a model fo
 
 ### Deployment Architecture
 
-The model is deployed via a Docker Compose stack running **vLLM** to provide an OpenAI-compatible endpoint.
+The model is deployed via a two-service Docker Compose stack: a **Validator Proxy** (public-facing) and a **vLLM** inference server (private to the Docker network). Clients interact exclusively with the Validator, which enforces all policy rules server-side before forwarding sanitized requests to vLLM and validating outputs before returning them.
 
 - **Hardware Profile:** 24GB VRAM GPU (RTX 4090 / A10 class equivalent), 8+ cores, 32GB RAM.
-- **Inference Configuration (Deterministic):** `temperature = 0.0`, `top_p = 1.0`, `max_tokens = 256`, `stream = false`.
+- **Inference Configuration (Deterministic):** `temperature = 0.0`, `top_p = 1.0`, `max_tokens = 256`, `stream = false` — enforced server-side by the validator regardless of client request parameters.
 - **Why vLLM?** Provides full control over deterministic generation, buffered output validation (no streaming), direct metric access, and reproducible configuration without the overhead of Kubernetes or SageMaker.
 
 ### Cost & Capacity Modeling
@@ -163,10 +163,10 @@ The model is deployed via a Docker Compose stack running **vLLM** to provide an 
 
 ### Monitoring & Security
 
-A local Python client enforces the final validation tier before the user ever sees the generated command.
+A dedicated Python Validator Proxy service enforces the final validation tier before any generated command reaches the client. vLLM is not reachable from outside the Docker network.
 
-- **Observability Stack:** vLLM Prometheus metrics + structured JSON logging + local benchmark script tracking p50/p95 latency and validation rates.
-- **Security Controls:** Streaming is disabled to execute a deterministic validation layer in the client. Chaining operators are blocked, and generation is bound by hard token caps.
+- **Observability Stack:** `/health` endpoint on the validator + structured logging + local benchmark script tracking p50/p95 latency and pass/block/error rates.
+- **Security Controls:** Streaming is unconditionally disabled in the proxy. Chaining operators, dangerous patterns, and markdown fencing are blocked at the server layer. Generation parameters are overridden server-side from `config/model_config.yaml`.
 
 *The guiding philosophy is: LLMs propose. Deterministic systems decide.*
 
@@ -178,13 +178,13 @@ SecureCLI-Tuner is intentionally constrained in scope. The following limitations
 
 ### 1. Trust Boundary Assumption
 
-Policy enforcement currently occurs in the client layer. The vLLM inference endpoint must not be directly exposed to untrusted networks. In a production environment, the model endpoint must be:
+Policy enforcement occurs in the **Validator Proxy** server layer. The vLLM inference endpoint is private to the Docker network and cannot be reached directly by clients. In production, the validator itself should additionally be:
 
-- Placed behind a reverse proxy or API gateway
+- Placed behind a reverse proxy or API gateway for authentication
+- Protected by rate limiting controls
 - Restricted to internal network access
-- Protected by authentication and rate limiting controls
 
-Direct access to the raw inference endpoint would bypass deterministic validation safeguards.
+Direct exposure of the raw vLLM inference endpoint would bypass all deterministic validation safeguards.
 
 ---
 
