@@ -12,6 +12,8 @@ Educational materials for SecureCLI-Tuner.
 | [Lesson 4](Lesson_04_CommandRisk.md) | CommandRisk Engine | 60 min |
 | [Lesson 5](Lesson_05_RunPod_Setup.md) | RunPod Setup & Data Prep | 45 min |
 | [Lesson 6](Lesson_06_Semantic_Evaluation.md) | Semantic Evaluation | 30 min |
+| [Lesson 7](Lesson_07_Inference_and_Use_Cases.md) | Inference & Use Cases | 30 min |
+| [Lesson 8](Lesson_08_Drift_Detection.md) | Drift Detection | 45 min |
 
 ## Target Audience
 
@@ -28,12 +30,12 @@ Educational materials for SecureCLI-Tuner.
 ## Learning Path
 
 ```
-Lesson 1 → Lesson 2 → Lesson 3 → Lesson 4 → Lesson 5 → Lesson 6
-   ↓           ↓           ↓           ↓           ↓           ↓
-  Data    Training   Safety     Production   RunPod    Semantic
-Pipeline    LoRA    Evaluation  Guardrails  Deployment   Eval
+Lesson 1 → Lesson 2 → Lesson 3 → Lesson 4 → Lesson 5 → Lesson 6 → Lesson 7 → Lesson 8
+   ↓           ↓           ↓           ↓           ↓           ↓           ↓           ↓
+  Data    Training   Safety     Production   RunPod    Semantic   Inference   Drift
+Pipeline    LoRA    Evaluation  Guardrails  Deployment   Eval     Use Cases  Detection
 ```
 
 ## Total Course Duration
 
-~4 hours of educational content
+~5 hours of educational content

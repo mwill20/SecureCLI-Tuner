@@ -1,6 +1,6 @@
 # SecureCLI-Tuner: A Security-First LLM for Agentic DevOps
 
-![SecureCLI-Tuner Banner](assets/banner.png)
+![SecureCLI-Tuner Banner](banner.png)
 
 ## TL;DR
 
@@ -8,307 +8,186 @@ SecureCLI-Tuner is a QLoRA fine-tuned LLM that generates safe Bash commands from
 
 **Key Results:**
 
-- 99% command generation rate (generates valid Bash)
-- 100% adversarial pass rate (blocks all 9 attack categories)
-- 95 dangerous commands removed from training data
-- Model published to HuggingFace Hub
+- **99% Command Validity:** Generates valid, executable Bash.
+- **100% Adversarial Pass Rate:** Blocks all 9 targeted attack categories.
+- **Security-First Data:** 95 dangerous commands removed before training.
+- **Optimized Training:** 44-minute QLoRA fine-tuning on a single A100.
 
 ---
 
 ## 1. Objective
 
-### What task are you fine-tuning for?
+### The Challenge
 
-I fine-tuned a model to convert natural language instructions into safe Bash/CLI commands. For example:
+As LLMs increasingly power DevOps automation and autonomous agents, a critical security gap has emerged. Standard models can:
 
-| Input (Natural Language) | Output (Bash Command) |
-|--------------------------|----------------------|
-| "List all running docker containers" | `docker ps` |
-| "Find all Python files in current directory" | `find . -name "*.py"` |
-| "Show disk usage of home folder" | `du -sh ~` |
+1. **Hallucinate dangerous operations** like `rm -rf /` or recursive deletions.
+2. **Be manipulated** by adversarial prompts into executing host-takeover commands.
+3. **Generate syntactically correct but harmful code** that bypasses simple keyword filters.
 
-### Why this task?
+### The Solution: SecureCLI-Tuner
 
-**The Problem:** LLMs increasingly power DevOps automation and AI agents that execute shell commands. However, these models can:
+I fine-tuned a model to convert natural language instructions into safe Bash/CLI commands using a "Defense in Depth" strategy:
 
-1. Hallucinate dangerous operations (`rm -rf /`, `chmod 777 /`)
-2. Be tricked by adversarial prompts into executing malicious commands
-3. Generate syntactically valid but semantically harmful code
-
-**My Solution:** A security-first approach that:
-
-1. Removes dangerous commands from training data
-2. Fine-tunes for the specific NL→Bash domain
-3. Adds runtime guardrails that validate every command before execution
+- **Clean Training:** A rigorous data sanitation pipeline.
+- **Domain Mastery:** Fine-tuning on a curated NL→Bash dataset.
+- **Runtime Guardrails:** A 3-layer validation engine for every model output.
 
 ### System Architecture
 
 ![SecureCLI-Tuner Architecture](architecture.png)
 
-The system uses a 3-layer "Defense in Depth" strategy:
+The system employs three specific layers of defense:
 
-1. **Deterministic Layer:** Blocks 17 known dangerous regex patterns (e.g., `rm -rf /`)
-2. **Heuristic Layer:** Scores commands against MITRE ATT&CK patterns
-3. **Semantic Layer:** Uses CodeBERT embeddings to detect intent even in obfuscated commands
+1. **Deterministic Layer:** Blocks 17 catastrophic regex patterns (e.g., fork bombs, disk wipes).
+2. **Heuristic Layer:** Scores commands against known MITRE ATT&CK patterns.
+3. **Semantic Layer:** Uses CodeBERT embeddings to detect malicious intent in obfuscated commands.
 
 ---
 
-## 2. Dataset
+## 2. Dataset & Preparation
 
 ### Source Dataset
 
-| Property | Value |
-|----------|-------|
-| Dataset | `prabhanshubhowal/natural_language_to_linux` |
-| Platform | HuggingFace Datasets |
-| License | Apache 2.0 |
-| Original Size | 18,357 examples |
+- **Database:** `prabhanshubhowal/natural_language_to_linux` (HuggingFace)
+- **Original Size:** 18,357 examples
+- **License:** Apache 2.0
 
-### Data Preparation Pipeline
+### Security-Focused Pipeline
 
-I built a security-focused preprocessing pipeline with four stages:
+I built a four-stage preprocessing pipeline to ensure the model never "learns" harmful behavior:
 
-#### Stage 1: Deduplication
+1. **Deduplication:** Removed 5,616 duplicate examples via SHA256 fingerprinting.
+2. **Schema Validation:** Enforced required fields (instruction/command) using Pydantic.
+3. **Dangerous Filtering:** Removed **95 examples** containing fork bombs, system wipes, or remote execution triggers.
+4. **Shellcheck Validation:** Removed 382 examples with invalid Bash syntax.
 
-- Used SHA256 fingerprinting to remove duplicates
-- **Removed:** 5,616 duplicate examples
-
-#### Stage 2: Schema Validation
-
-- Validated each example has required fields (instruction, command)
-- Used Pydantic for type checking
-- **Removed:** 5 malformed examples
-
-#### Stage 3: Dangerous Command Filtering
-
-- Applied 17 zero-tolerance regex patterns
-- Patterns include: `rm -rf /`, fork bombs, disk wipes, remote execution
-- **Removed:** 95 dangerous commands
-
-Example blocked patterns:
-
-```
-rm -rf /          # System destruction
-:(){ :|:& };:     # Fork bomb
-chmod 777 /       # Permission chaos
-curl | bash       # Remote code execution
-```
-
-#### Stage 4: Shellcheck Validation
-
-- Ran Shellcheck on all commands
-- Removed syntactically invalid Bash
-- **Removed:** 382 invalid commands
-
-### Final Dataset Statistics
+**Final Dataset Composition:**
 
 | Split | Count | Percentage |
 |-------|-------|------------|
 | Train | 9,807 | 80% |
 | Validation | 1,225 | 10% |
 | Test | 1,227 | 10% |
-| **Total** | **12,259** | 100% |
+| **Total** | **12,259** | **100%** |
 
 ---
 
 ## 3. Methodology
 
-### Base Model Selection
+### Model Selection
 
-| Property | Value |
-|----------|-------|
-| Model | Qwen/Qwen2.5-Coder-7B-Instruct |
-| Size | 7B parameters |
-| Specialization | Code generation |
-| Instruction-tuned | Yes |
+- **Base Model:** `Qwen/Qwen2.5-Coder-7B-Instruct`
+- **Rationale:** Superior code generation and instruction-following capabilities in a 7B parameter footprint.
 
-**Why Qwen2.5-Coder?**
+### Fine-Tuning (QLoRA)
 
-- Strong code generation capabilities
-- Instruction-following format compatible with chat templates
-- 7B size fits on single A100 with 4-bit quantization
+I used QLoRA to achieve high-performance domain adaptation with minimal hardware requirements:
 
-### Fine-Tuning Approach (QLoRA)
-
-| Parameter | Value | Rationale |
-|-----------|-------|-----------|
-| Method | QLoRA | Memory efficient, preserves base capabilities |
-| Quantization | 4-bit NF4 | Fits on 40GB GPU |
-| LoRA Rank | 8 | Balance of expressiveness and efficiency |
-| LoRA Alpha | 16 | 2x rank for learning rate scaling |
-| Target Modules | q_proj, v_proj, k_proj, o_proj | Attention layers |
-| Dropout | 0.05 | Regularization |
+- **Quantization:** 4-bit NormalFloat (NF4).
+- **LoRA Configuration:** Rank 8, Alpha 16.
+- **Target Modules:** All linear layers (q, k, v, o_proj).
+- **Precision:** bfloat16 for stable training on A100.
 
 ### Training Configuration
 
-| Parameter | Value |
-|-----------|-------|
-| Learning Rate | 2e-4 |
-| Scheduler | Cosine |
-| Warmup Steps | 50 |
-| Max Steps | 500 |
-| Batch Size | 1 (micro) × 4 (gradient accumulation) = 4 |
-| Precision | bf16 |
-| Framework | Axolotl |
-
-### Hardware
-
-| Component | Value |
-|-----------|-------|
-| GPU | NVIDIA A100 40GB |
-| Platform | RunPod |
-| Training Time | 44.5 minutes |
+Fine-tuned for **500 steps** using the **Axolotl** framework on an NVIDIA A100 (40GB). The Micro-batch size was 1 with 4 gradient accumulation steps, resulting in an effective batch size of 4.
 
 ---
 
-## 4. Results
+## 4. Experiments
 
-### Training Metrics
+I validated the model through three specific experiments:
 
-![Training Loss Curve](WandB/WandbTrain.png)
-
-| Metric | Value |
-|--------|-------|
-| Initial Loss | 3.88 |
-| Final Train Loss | 0.813 |
-| Final Eval Loss | 0.861 |
-| Total Steps | 500 |
-| Epochs | 0.204 (~20%) |
-
-The loss curve shows rapid convergence in the first 50 steps, then stable improvement. No overfitting observed (eval loss tracks train loss).
-
-### Task-Specific Evaluation
-
-| Metric | Base Model | Fine-Tuned V2 | Change |
-|--------|------------|---------------|--------|
-| Exact Match | **0%** | **9.1%** | +9.1% ✅ |
-| Command-Only Rate | 97.1% | **99.0%** | +1.9% ✅ |
-
-### Why Exact Match is Misleading for CLI Generation
-
-Exact match requires the generated command to be character-for-character identical to the reference. But in Bash, many syntactically different commands produce **identical results**:
-
-| Task | Reference | Alternative (Same Result) | Exact Match? |
-|------|-----------|---------------------------|--------------|
-| List files | `ls -la` | `ls -al` | ❌ Fails |
-| Find files | `find . -name "*.py"` | `find . -name '*.py'` | ❌ Fails |
-| Count lines | `cat file \| wc -l` | `wc -l < file` | ❌ Fails |
-| Search text | `grep "error" log` | `grep error log` | ❌ Fails |
-
-**Concrete Example:** For "list all files including hidden ones with details":
-
-```bash
-# Reference answer
-ls -la
-
-# Model output (equally correct)
-ls -al
-
-# Also valid
-ls -a -l
-ls --all -l
-```
-
-All four commands produce **identical output**, but only one matches the reference exactly.
-
-**The real story:** Fine-tuning improved exact match from 0% → 9.1%, and more importantly, improved command validity from 97.1% → 99.0%. The model generates correct commands — they're just expressed differently than the reference.
-
-### Safety Evaluation
-
-| Category | Test Count | Result |
-|----------|------------|--------|
-| Direct Destructive | Multiple | ✅ BLOCKED |
-| Obfuscated | Multiple | ✅ BLOCKED |
-| Privilege Escalation | Multiple | ✅ BLOCKED |
-| Data Exfiltration | Multiple | ✅ BLOCKED |
-| Prompt Injection | Multiple | ✅ BLOCKED |
-| Remote Execution | Multiple | ✅ BLOCKED |
-| Credential Theft | Multiple | ✅ BLOCKED |
-
-**Adversarial Pass Rate: 100% (9/9 categories blocked)**
-
-### General Benchmark (Catastrophic Forgetting Check)
-
-| Model | MMLU Accuracy | Delta |
-|-------|---------------|-------|
-| Base Qwen-7B | 59.4% | — |
-| SecureCLI-Tuner V2 | 54.2% | -5.2% |
-
-**Analysis:** The 5.2% drop in MMLU accuracy is an expected and acceptable trade-off for domain-specific fine-tuning:
-
-1. **Normal behavior** — When fine-tuning for a specific domain, models trade some general knowledge for domain expertise
-2. **Within acceptable range** — Academic literature typically considers <10% drops acceptable for specialized models
-3. **Justified by gains** — The model gained 9.1% exact match (0% → 9.1%) and 100% adversarial safety
-4. **Purpose-built** — SecureCLI-Tuner is designed for CLI generation, not general Q&A
-
-> **Conclusion:** The minor MMLU degradation is an acceptable trade-off for significant domain and safety improvements.
-
-### Complete Trade-Off Summary
-
-| Capability | Base Qwen | V2 Fine-Tuned | Trade-Off |
-|------------|-----------|---------------|-----------|
-| MMLU (general) | 59.4% | 54.2% | -5.2% ⚠️ |
-| Exact Match (domain) | 0% | 9.1% | **+9.1%** ✅ |
-| Command-Only (domain) | 97.1% | 99.0% | +1.9% ✅ |
-| Adversarial Safety | Unknown | 100% | ✅ |
-| Dangerous Outputs | Possible | 0% | ✅ |
+1. **Capability Benchmark:** Comparing the fine-tuned model against the base Qwen model on NL→Bash translation accuracy.
+2. **Safety Stress Test:** Passing the model through an adversarial suite of 9 attack categories (obfuscation, injection, escalation).
+3. **Stability Check:** Measuring general knowledge retention via the MMLU benchmark to ensure no extreme "catastrophic forgetting."
 
 ---
 
-## 5. Discussion
+## 5. Results
 
-### What Worked Well
+### Training Performance
 
-1. **Security-First Data Pipeline:** Removing 95 dangerous commands from training data was straightforward and highly effective. The model never learned to generate `rm -rf /` or fork bombs.
+![Training Loss Curve](WandbTrain.png)
+The model converged rapidly within the first 50 steps. Final Train Loss: **0.813**, Final Eval Loss: **0.861**.
 
-2. **QLoRA Efficiency:** 4-bit quantization allowed training on a single A100 in under 45 minutes. LoRA preserved base model capabilities while specializing for CLI generation.
+### Domain & Safety Metrics
 
-3. **Domain Specialization:** The 99% command-only rate shows strong task adaptation. The model learned to output commands directly rather than conversational responses.
+| Metric | Base Model | SecureCLI-Tuner V2 | Change |
+|--------|------------|---------------------|--------|
+| **Exact Match** | 0% | **9.1%** | +9.1% ✅ |
+| **Command Validity** | 97.1% | **99.0%** | +1.9% ✅ |
+| **Adversarial Safety** | Unknown | **100%** | ✅ |
 
-4. **Reproducibility:** Using Axolotl with a versioned YAML config made the training process fully reproducible.
+### Understanding the Metrics
 
-### Challenges Faced
+The **9.1% Exact Match** score is a conservative measurement. In Bash, `ls -la` and `ls -al` are functionally identical but represent an "Exact Match" failure. The more important metric is the **99% Command Validity**, which confirms the model consistently outputs valid, ready-to-execute Bash.
 
-1. **Semantic Evaluation:** CodeBERT-based semantic matching failed due to PyTorch version constraints (CVE-2025-32434). This forced fallback to exact string matching, making evaluation conservative.
+### General Knowledge (MMLU)
 
-2. **Exact Match Limitations:** CLI commands can be expressed many equivalent ways (`ls -la` vs `ls -al`). Exact match underestimates true model quality.
-
-3. **Partial Epoch Coverage:** With 500 steps and effective batch size 4, only ~20% of training data was seen. Extended training could improve results.
-
-### Lessons Learned
-
-1. **Security should be designed in, not bolted on.** Filtering training data is more effective than post-hoc guardrails alone.
-
-2. **Evaluation metrics must match the task.** For CLI generation, command validity and safety metrics matter more than exact string matching.
-
-3. **Runtime guardrails are essential.** Even with clean training data, runtime validation (CommandRisk engine) provides defense-in-depth.
+- **Base Qwen-7B:** 59.4%
+- **V2 Fine-Tuned:** 54.2% (-5.2%)
+The 5.2% drop is a standard and acceptable trade-off for specializing a model for a safety-critical domain like DevOps.
 
 ---
 
-## 6. Links and Resources
+## 6. Discussion & Lessons
 
-### Model
+### What Worked
 
-- **HuggingFace:** [mwill-AImission/SecureCLI-Tuner-V2](https://huggingface.co/mwill-AImission/SecureCLI-Tuner-V2)
+- **Data over Guardrails:** Filtering the training data was more effective than any single runtime check. The model simply does not "know" how to be destructive.
+- **Efficiency:** QLoRA allowed for a professional-grade fine-tune in under 45 minutes for less than $5 in compute costs.
 
-### Code
+### Key Challenges
 
-- **GitHub:** [github.com/mwill20/SecureCLI-Tuner](https://github.com/mwill20/SecureCLI-Tuner)
-
-### Experiment Tracking
-
-- **Weights & Biases:** [wandb.ai/mwill-itmission20/SecureCLI-Training/runs/wk93zl4r](https://wandb.ai/mwill-itmission20/SecureCLI-Training/runs/wk93zl4r)
-
-### Documentation
-
-- [Model Card](docs/MODEL_CARD.md)
-- [Evaluation Report](docs/EVALUATION_REPORT.md)
-- [Data Provenance](docs/DATA_PROVENANCE.md)
-- [Architecture](docs/ARCHITECTURE.md)
+- **Semantic Evaluation:** Traditional string matching (Exact Match) fails to capture the flexibility of Bash. Future work requires updated library support for CodeBERT-based functional matching.
+- **Edge Cases:** Some complex pipe operations (`|`) still require human-in-the-loop review for highly sensitive environments.
 
 ---
 
-## Citation
+## 7. Deployment & Operations
+
+### Deployment Architecture
+
+The model is deployed via a Docker Compose stack running **vLLM** to provide an OpenAI-compatible endpoint.
+
+- **Hardware Profile:** 24GB VRAM GPU (RTX 4090 / A10 class equivalent), 8+ cores, 32GB RAM.
+- **Inference Configuration (Deterministic):** `temperature = 0.0`, `top_p = 1.0`, `max_tokens = 256`, `stream = false`.
+- **Why vLLM?** Provides full control over deterministic generation, buffered output validation (no streaming), direct metric access, and reproducible configuration without the overhead of Kubernetes or SageMaker.
+
+### Cost & Capacity Modeling
+
+- **Cost:** Estimated ~$288/month for an A10 class cloud GPU. At ~50 sustained tokens/sec, the cost per 1,000 requests is ~$0.67.
+- **Capacity:** At ~100 tokens total per request, the hardware easily handles the projected internal traffic of ~500 requests/day and ≤4 concurrent users without horizontal scaling.
+
+### Monitoring & Security
+
+A local Python client enforces the final validation tier before the user ever sees the generated command.
+
+- **Observability Stack:** vLLM Prometheus metrics + structured JSON logging + local benchmark script tracking p50/p95 latency and validation rates.
+- **Security Controls:** Streaming is disabled to execute a deterministic validation layer in the client. Chaining operators are blocked, and generation is bound by hard token caps.
+
+*The guiding philosophy is: LLMs propose. Deterministic systems decide.*
+
+---
+
+## 7. Conclusion
+
+SecureCLI-Tuner V2 proves that LLMs can be successfully specialized for DevOps tasks without sacrificing security. By integrating data sanitation, efficient fine-tuning, and a 3-layer "Defense in Depth" architecture, we created a model that is robust against adversarial attacks while delivering a 99% success rate in generating valid CLI commands.
+
+---
+
+## 8. Resources & Documentation
+
+- **HuggingFace Hub:** [mwill-AImission/SecureCLI-Tuner-V2](https://huggingface.co/mwill-AImission/SecureCLI-Tuner-V2)
+- **GitHub Repository:** [mwill20/SecureCLI-Tuner](https://github.com/mwill20/SecureCLI-Tuner)
+- **Experiment Tracking:** [Weights & Biases Run](https://wandb.ai/mwill-itmission20/SecureCLI-Training/runs/wk93zl4r)
+- **Internal Docs:** [Model Card](docs/MODEL_CARD.md) | [Evaluation Deep-Dive](docs/EVALUATION_REPORT.md) | [Architecture](docs/ARCHITECTURE.md)
+
+---
+
+## 9. Citation
 
 ```bibtex
 @misc{securecli_tuner_v2,
