@@ -172,6 +172,97 @@ A local Python client enforces the final validation tier before the user ever se
 
 ---
 
+## Security Limitations & Assumptions
+
+SecureCLI-Tuner is intentionally constrained in scope. The following limitations and assumptions define its security boundary:
+
+### 1. Trust Boundary Assumption
+
+Policy enforcement currently occurs in the client layer. The vLLM inference endpoint must not be directly exposed to untrusted networks. In a production environment, the model endpoint must be:
+
+- Placed behind a reverse proxy or API gateway
+- Restricted to internal network access
+- Protected by authentication and rate limiting controls
+
+Direct access to the raw inference endpoint would bypass deterministic validation safeguards.
+
+---
+
+### 2. Non-Execution Guarantee
+
+SecureCLI-Tuner does not execute generated commands. It only proposes commands. Execution safety is assumed to be handled by downstream systems or by human review.
+
+This system is not designed as an autonomous command execution engine.
+
+---
+
+### 3. Pattern-Based Validation Scope
+
+Current validation is deterministic and string-pattern based. While it blocks known destructive operators and patterns, it does not perform full semantic shell parsing or AST-level command normalization.
+
+In a hardened production environment, additional controls may include:
+
+- Shell tokenization prior to validation
+- Normalization of obfuscated inputs
+- Allowlist-based command category enforcement
+- Static analysis of generated command structures
+
+---
+
+### 4. Identity & Access Assumptions
+
+This deployment assumes:
+
+- Internal user access only
+- API key or gateway-level authentication
+- Centralized logging for request attribution
+
+Production-grade deployment should additionally implement:
+
+- Key rotation policies
+- Audit trail binding of request_id to authenticated identity
+- Alerting on anomalous usage patterns
+
+---
+
+### 5. Supply Chain Considerations
+
+The container image (vllm/vllm-openai:v0.4.0) must be treated as a supply chain dependency.
+
+A hardened deployment should include:
+
+- Image digest pinning
+- CVE scanning of container layers
+- Regular dependency update cadence
+- Infrastructure-as-code version control
+
+---
+
+### 6. Capacity & DoS Assumptions
+
+The system assumes controlled concurrency (≤4 concurrent requests). Excessive parallelism may result in VRAM exhaustion or latency degradation.
+
+Production deployments should include:
+
+- Concurrency caps
+- Token-per-minute rate limits
+- Upstream load shedding mechanisms
+
+---
+
+### Security Posture Summary
+
+SecureCLI-Tuner is secure within its defined operational boundary:
+
+- Deterministic generation
+- Buffered output validation
+- Fail-closed enforcement
+- Non-execution design
+
+It is not a general-purpose LLM endpoint and should not be treated as one.
+
+---
+
 ## 7. Conclusion
 
 SecureCLI-Tuner V2 proves that LLMs can be successfully specialized for DevOps tasks without sacrificing security. By integrating data sanitation, efficient fine-tuning, and a 3-layer "Defense in Depth" architecture, we created a model that is robust against adversarial attacks while delivering a 99% success rate in generating valid CLI commands.
